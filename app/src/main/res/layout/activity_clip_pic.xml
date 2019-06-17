@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <com.anlida.smartlock.widget.ClipViewLayout
+        android:id="@+id/clipViewLayout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        app:clipBorderWidth="2dp"
+        app:clipType="rectangle"
+        app:mHorizontalPadding="30dp" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="#222">
+
+        <TextView
+            android:id="@+id/btn_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentStart="true"
+            android:gravity="center"
+            android:paddingEnd="15dp"
+            android:paddingStart="25dp"
+            android:text="@string/pic_clipimg_cancel"
+            android:textColor="#FFF"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/bt_ok"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:gravity="center"
+            android:paddingEnd="25dp"
+            android:paddingStart="15dp"
+            android:text="@string/pic_clipimg_choose"
+            android:textColor="#FFF"
+            android:textSize="15sp" />
+    </RelativeLayout>
+
+
+</LinearLayout>

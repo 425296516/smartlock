@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="50dp"
+    android:orientation="vertical"
+    android:paddingLeft="150dp"
+    android:paddingRight="150dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/shape_rec_1654e2"
+        android:drawablePadding="10dp"
+        android:text="报损设备信息"
+        android:textColor="@color/color_1654E2"
+        android:textSize="16sp" />
+
+    <EditText
+        android:id="@+id/et_input_imei"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:background="@drawable/shape_et_bg_e2ecff"
+        android:drawableRight="@drawable/ic_star_black_6dp"
+        android:hint="请输入IMEI号"
+        android:padding="10dp"
+        android:textColor="@color/color_8C8686"
+        android:textSize="14sp" />
+
+    <EditText
+        android:id="@+id/et_repair_because"
+        android:layout_width="300dp"
+        android:layout_height="200dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="50dp"
+        android:background="@drawable/shape_et_bg_e2ecff"
+        android:gravity="left"
+        android:hint="请输入报修报损的原因"
+        android:padding="10dp"
+        android:textColor="@color/color_8C8686"
+        android:textSize="14sp" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="65dp"
+        android:layout_marginRight="10dp"
+        android:src="@drawable/ic_star_black_6dp" />
+
+    <TextView
+        android:id="@+id/tv_submit"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="300dp"
+        android:background="@color/color_668FEC"
+        android:gravity="center"
+        android:padding="10dp"
+        android:text="提交"
+        android:textColor="@android:color/white" />
+
+
+</RelativeLayout>

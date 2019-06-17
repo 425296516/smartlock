@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+    <!--形状填充的颜色-->
+    <solid android:color="#FFF" />
+
+    <!-- padding设置内容区域离边界的间距 -->
+
+    <stroke
+        android:width="1px"
+        android:color="#E2ECFF" />
+
+</shape>

@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <EditText
+        android:id="@+id/et_search"
+        android:layout_width="180dp"
+        android:layout_height="30dp"
+        android:layout_marginLeft="50dp"
+        android:background="@drawable/shape_search_bg_left"
+        android:drawableLeft="@drawable/ic_search_black_12dp"
+        android:drawablePadding="10dp"
+        android:hint="请输入姓名或身份证号"
+        android:paddingLeft="10dp"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/tv_search"
+        android:layout_width="60dp"
+        android:layout_height="30dp"
+        android:layout_marginLeft="230dp"
+        android:background="@drawable/shape_search_bg_right"
+        android:gravity="center"
+        android:text="搜索"
+        android:textColor="@android:color/white" />
+
+    <Button
+        android:id="@+id/btn_device_lock"
+        android:layout_width="150dp"
+        android:layout_height="30dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="50dp"
+        android:background="@drawable/shape_bg_e53232"
+        android:text="设备上锁"
+        android:textColor="@android:color/white"
+        android:textSize="14sp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:layout_marginTop="35dp"
+        android:background="@color/color_E2ECFF" />
+
+    <TextView
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/et_search"
+        android:layout_marginLeft="60dp"
+        android:layout_marginTop="30dp"
+        android:drawableLeft="@drawable/shape_rec_1654e2"
+        android:drawablePadding="10dp"
+        android:gravity="center_vertical"
+        android:padding="0dp"
+        android:text="添加设备信息"
+        android:textColor="@color/color_1654E2"
+        android:textSize="14sp" />
+
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="100dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="170dp"
+            android:layout_height="45dp"
+            android:background="@color/color_E2ECFF"
+            android:gravity="center"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:text="设备IMEI号"
+            android:textColor="@color/color_1F1F1F"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="80dp"
+            android:layout_height="45dp"
+            android:background="@color/color_E2ECFF"
+            android:gravity="center"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:text="姓名"
+            android:textColor="@color/color_1F1F1F"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="180dp"
+            android:layout_height="45dp"
+            android:background="@color/color_E2ECFF"
+            android:gravity="center"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:text="身份证号码"
+            android:textColor="@color/color_1F1F1F"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="120dp"
+            android:layout_height="45dp"
+            android:background="@color/color_E2ECFF"
+            android:gravity="center"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:text="电话号码"
+            android:textColor="@color/color_1F1F1F"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="100dp"
+            android:layout_height="45dp"
+            android:background="@color/color_E2ECFF"
+            android:gravity="center"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:text="上锁状态"
+            android:textColor="@color/color_1F1F1F"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+
+        <TextView
+            android:layout_width="100dp"
+            android:layout_height="45dp"
+            android:background="@color/color_E2ECFF"
+            android:gravity="center"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:text="通讯状态"
+            android:textColor="@color/color_1F1F1F"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+
+        <TextView
+            android:layout_width="40dp"
+            android:layout_height="45dp"
+            android:background="@color/color_E2ECFF"
+            android:gravity="center"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:text="更多"
+            android:textColor="@color/color_1F1F1F"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_all_select"
+            android:layout_width="40dp"
+            android:layout_height="45dp"
+            android:layout_marginLeft="10dp"
+            android:background="@color/color_E2ECFF"
+            android:gravity="center"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:text="全选"
+            android:textColor="@color/color_849ED1"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="202dp"
+        android:layout_below="@+id/linearLayout"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="5dp"
+        android:overScrollMode="never"
+        android:scrollbars="none"
+        android:visibility="visible" />
+
+    <TextView
+        android:id="@+id/tv_add_device_person"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/recycler_view"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="30dp"
+        android:layout_marginRight="120dp"
+        android:drawableLeft="@drawable/icon_10"
+        android:drawablePadding="5dp"
+        android:text="继续添加人员" />
+    <!--  <include  layout="@layout/item_device_manager"
+          />-->
+
+</RelativeLayout>

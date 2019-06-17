@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:layout_marginLeft="300dp">
+
+    <TextView
+        android:id="@+id/tv_car"
+        style="@style/nav_radio"
+        android:drawableTop="@drawable/selector_main_nabar_home"
+        android:text="" />
+
+    <TextView
+        android:id="@+id/tv_locate"
+        style="@style/nav_radio"
+        android:drawableTop="@drawable/selector_main_nabar_device_manager"
+        android:text="" />
+
+    <TextView
+        android:id="@+id/tv_ranking"
+        style="@style/nav_radio"
+        android:drawableTop="@drawable/selector_main_nvbar_warn_record"
+        android:text="" />
+
+    <TextView
+        android:id="@+id/tv_repair"
+        style="@style/nav_radio"
+        android:drawableTop="@drawable/selector_main_nvbar_repair"
+        android:text="" />
+
+    <TextView
+        android:id="@+id/tv_user"
+        style="@style/nav_radio"
+        android:drawableTop="@drawable/selector_main_nvbar_mine"
+        android:text="" />
+
+</LinearLayout>
