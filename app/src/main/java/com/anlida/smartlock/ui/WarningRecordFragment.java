@@ -46,6 +46,10 @@ public class WarningRecordFragment extends LazyLoadFragment {
         initRecyclerView();
     }
 
+    @Override
+    protected boolean isNeedReload() {
+        return true;
+    }
 
     @OnClick({R.id.tv_search})
     public void onClick(View v) {
@@ -119,10 +123,12 @@ public class WarningRecordFragment extends LazyLoadFragment {
                 .subscribe(new FMSubscriber<RespWarnRecord>() {
                     @Override
                     public void onNext(RespWarnRecord respDeviceManager) {
-                        if (status == 1) {
-                            warnRecordAdapter.setData(respDeviceManager.getData().getList());
-                        } else {
-                            wrAdapterResult.setData(respDeviceManager.getData().getList());
+                        if (0 == respDeviceManager.getCode()) {
+                            if (status == 1) {
+                                warnRecordAdapter.setData(respDeviceManager.getData().getList());
+                            } else {
+                                wrAdapterResult.setData(respDeviceManager.getData().getList());
+                            }
                         }
                     }
                 });

@@ -87,10 +87,12 @@
 
     <ImageView
         android:id="@+id/iv_more"
-        android:layout_width="40dp"
+        android:layout_width="45dp"
         android:layout_height="45dp"
         android:gravity="center"
-        android:background="@drawable/btn_more" />
+        android:background="@drawable/shape_item_device_manager_e2ecff"
+        android:scaleType="centerInside"
+        android:src="@drawable/btn_more" />
 
     <ImageView
         android:id="@+id/iv_select"

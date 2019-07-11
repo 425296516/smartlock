@@ -70,7 +70,7 @@ public interface RestAPI {
     Flowable<RespWarnRecord> getWarningRecord(@Body ReqWarnRecord reqWarnRecord);
 
     //搜索预警记录接口
-    @POST("/warninglog/lists")
+    @POST("/warninglog/page")
     Flowable<RespWarnRecord> getSearchWarningRecord(@Body ReqSearchWarning reqSearchWarning);
 
     //处理预警记录接口

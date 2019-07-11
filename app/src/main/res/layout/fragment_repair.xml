@@ -18,6 +18,15 @@
         android:textColor="@color/color_1654E2"
         android:textSize="16sp" />
 
+
+    <ImageView
+        android:id="@+id/iv_scan_code"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:background="@drawable/shape_et_bg_e2ecff"
+        android:src="@drawable/pic_dianji" />
+
     <EditText
         android:id="@+id/et_input_imei"
         android:layout_width="300dp"
@@ -25,6 +34,7 @@
         android:layout_marginTop="50dp"
         android:background="@drawable/shape_et_bg_e2ecff"
         android:drawableRight="@drawable/ic_star_black_6dp"
+        android:visibility="gone"
         android:hint="请输入IMEI号"
         android:padding="10dp"
         android:textColor="@color/color_8C8686"
@@ -57,7 +67,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_marginTop="300dp"
-        android:background="@color/color_668FEC"
+        android:background="@drawable/shape_rec_circle_668fec"
         android:gravity="center"
         android:padding="10dp"
         android:text="提交"

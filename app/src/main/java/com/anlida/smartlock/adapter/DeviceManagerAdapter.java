@@ -133,7 +133,7 @@ public class DeviceManagerAdapter extends RecyclerView.Adapter<DeviceManagerAdap
         holder.ivMore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                holder.ivMore.setBackgroundResource(R.drawable.btn_more_pre);
+                holder.ivMore.setImageResource(R.drawable.btn_more_pre);
                 SelectDeviceManagerPopupWindow selectDeviceManagerPopupWindow = new SelectDeviceManagerPopupWindow(mActivity,deviceManagerList.get(position), new OnSelectListener() {
                     @Override
                     public void onSelect(String province, String city, String busGroup) {
@@ -142,7 +142,7 @@ public class DeviceManagerAdapter extends RecyclerView.Adapter<DeviceManagerAdap
 
                     @Override
                     public void onDismiss() {
-                        holder.ivMore.setBackgroundResource(R.drawable.btn_more);
+                        holder.ivMore.setImageResource(R.drawable.btn_more);
                     }
                 });
                 selectDeviceManagerPopupWindow.showAsDropDown(holder.linearLayout);

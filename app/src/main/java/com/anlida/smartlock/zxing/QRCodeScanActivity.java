@@ -62,6 +62,7 @@ public class QRCodeScanActivity extends AppCompatActivity implements SurfaceHold
     private BeepManager beepManager;
     // 请求相机权限
     private static final int CAMERA_REQUEST_CODE = 101;
+    private String pageType;
 
     /**
      * Called when the activity is first created.
@@ -71,7 +72,7 @@ public class QRCodeScanActivity extends AppCompatActivity implements SurfaceHold
         super.onCreate(savedInstanceState);
         ActivityCollector.addActivity(this);
         setContentView(R.layout.activity_qrcode_scan);
-
+        pageType = getIntent().getStringExtra("PAGE_TYPE");
         surfaceView = findViewById(R.id.preview_view);
         viewfinderView = findViewById(R.id.viewfinder_view);
         tvInput = findViewById(R.id.tv_input);
@@ -115,7 +116,14 @@ public class QRCodeScanActivity extends AppCompatActivity implements SurfaceHold
         tvInput.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(QRCodeScanActivity.this, AddDeviceActivity.class));
+                if("ScanAddDeviceActivity".equals(pageType)) {
+                    startActivity(new Intent(QRCodeScanActivity.this, AddDeviceActivity.class));
+                }else if ("RepairFragment".equals(pageType)){
+                    QREvent event = new QREvent();
+                    event.setPageType("RepairFragment");
+                    EventBus.getDefault().post(event);
+                }
+
                 finish();
             }
         });

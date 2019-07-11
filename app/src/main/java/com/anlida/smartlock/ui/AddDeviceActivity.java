@@ -10,10 +10,12 @@ import com.anlida.smartlock.MainActivity;
 import com.anlida.smartlock.R;
 import com.anlida.smartlock.base.FMActivity;
 import com.anlida.smartlock.base.FMSubscriber;
+import com.anlida.smartlock.listener.OnSelectBloodTypeListener;
 import com.anlida.smartlock.model.HttpResult;
 import com.anlida.smartlock.model.req.ReqDeviceUse;
 import com.anlida.smartlock.network.HttpClient;
 import com.anlida.smartlock.utils.DataWarehouse;
+import com.anlida.smartlock.widget.BloodTypePopupWindow;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -34,8 +36,8 @@ public class AddDeviceActivity extends FMActivity {
     EditText etInputPhone;
     @BindView(R.id.et_input_age)
     EditText etInputAge;
-    @BindView(R.id.et_input_bloodtype)
-    EditText etInputBloodtype;
+    @BindView(R.id.tv_input_bloodtype)
+    TextView tvInputBloodtype;
 
     @BindView(R.id.cb_man)
     RadioButton cbMan;
@@ -64,7 +66,7 @@ public class AddDeviceActivity extends FMActivity {
 
     }
 
-    @OnClick({R.id.tv_submit, R.id.cb_man, R.id.cb_woman})
+    @OnClick({R.id.tv_submit, R.id.cb_man, R.id.cb_woman,R.id.tv_input_bloodtype})
     public void onClick(View v) {
         switch (v.getId()) {
 
@@ -72,7 +74,7 @@ public class AddDeviceActivity extends FMActivity {
 
                 addDeviceAndUser(DataWarehouse.getUserId(),etImei.getText().toString(),etInputName.getText().toString(),
                         etInputWordid.getText().toString(),etInputIdcard.getText().toString(),etInputPhone.getText().toString(),
-                        etInputAge.getText().toString(),etInputBloodtype.getText().toString(),"1");
+                        etInputAge.getText().toString(),tvInputBloodtype.getText().toString(),"1");
 
                 break;
 
@@ -87,6 +89,24 @@ public class AddDeviceActivity extends FMActivity {
 
                 cbMan.setChecked(false);
                 cbWoman.setChecked(true);
+
+                break;
+
+            case R.id.tv_input_bloodtype:
+
+                BloodTypePopupWindow bloodTypePopupWindow = new BloodTypePopupWindow(this, new OnSelectBloodTypeListener() {
+                    @Override
+                    public void onSelect(String bloodType) {
+                        tvInputBloodtype.setText(bloodType);
+                    }
+
+                    @Override
+                    public void onDismiss() {
+
+                    }
+                });
+
+                bloodTypePopupWindow.showAsDropDown(tvInputBloodtype, 0, 0);
 
                 break;
         }

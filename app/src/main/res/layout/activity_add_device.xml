@@ -145,8 +145,8 @@
                 android:textSize="14sp" />
 
 
-            <EditText
-                android:id="@+id/et_input_bloodtype"
+            <TextView
+                android:id="@+id/tv_input_bloodtype"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"

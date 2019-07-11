@@ -3,6 +3,7 @@ package com.anlida.smartlock.ui.user;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Paint;
 import android.os.Bundle;
@@ -31,6 +32,7 @@ import com.anlida.smartlock.model.resp.RespPersonCenter;
 import com.anlida.smartlock.model.resp.UserInfo;
 import com.anlida.smartlock.network.HttpClient;
 import com.anlida.smartlock.ui.AuthenticActivity;
+import com.anlida.smartlock.utils.CountDownUtils;
 import com.anlida.smartlock.utils.DataWarehouse;
 import com.anlida.smartlock.utils.DialogUtil;
 import com.anlida.smartlock.utils.ToastUtils;
@@ -226,7 +228,18 @@ public class LoginActivity extends FMActivity {
         tvGetCode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendCaptcha(etInputPhone.getText().toString());
+
+                HttpClient.getInstance().service.getVerifiCode(etInputPhone.getText().toString())
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new FMSubscriber<HttpResult>() {
+                            @Override
+                            public void onNext(HttpResult httpResult) {
+                                // 获取验证码成功之后开启倒计时
+                                CountDownUtils.startCountDown(getApplicationContext(), tvGetCode);
+                            }
+                        });
+
             }
         });
 
@@ -243,21 +256,19 @@ public class LoginActivity extends FMActivity {
             }
         });
 
+        alertDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                if(tvGetCode!=null) {
+                    CountDownUtils.stopCountdown(context, tvGetCode);
+                }
+            }
+        });
+
+
         return alertDialog;
     }
 
-
-    public void sendCaptcha(String mobile) {
-        HttpClient.getInstance().service.getVerifiCode(mobile)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new FMSubscriber<HttpResult>() {
-                    @Override
-                    public void onNext(HttpResult httpResult) {
-
-                    }
-                });
-    }
 
     public void getPassword(String mobile, String code) {
         HttpClient.getInstance().service.getPassword(mobile, code)
@@ -272,5 +283,4 @@ public class LoginActivity extends FMActivity {
                     }
                 });
     }
-
 }

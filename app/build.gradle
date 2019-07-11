@@ -14,8 +14,8 @@ android {
         applicationId "com.anlida.smartlock"
         minSdkVersion rootProject.ext.android.minSdkVersion
         targetSdkVersion rootProject.ext.android.targetSdkVersion
-        versionCode 3
-        versionName "1.0.4"
+        versionCode 1
+        versionName "1.0.3"
         multiDexEnabled true
 
         ndk {

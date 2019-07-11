@@ -19,123 +19,183 @@
         android:background="@color/color_668FEC"
         android:text="锁扣领用"
         android:textColor="@android:color/white"
-        android:textSize="14sp"
+        android:textSize="12sp"
 
         />
 
     <RelativeLayout
-        android:id="@+id/rl_unlock"
-        android:layout_width="200dp"
-        android:layout_height="250dp"
-        android:layout_marginTop="10dp">
+        android:id="@+id/rl_please_unlock"
+        android:layout_width="180dp"
+        android:layout_height="300dp">
 
-        <com.anlida.smartlock.widget.DrawableCenterTextView
-            android:layout_width="match_parent"
+        <ImageView
+            android:id="@+id/iv_top_bottom"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@color/color_45AF2F"
-            android:drawableLeft="@drawable/img_4"
-            android:drawablePadding="10dp"
-            android:gravity="center_vertical"
-            android:padding="5dp"
-            android:text="请求解锁"
-            android:textColor="@android:color/white"
-            android:textSize="14sp" />
+            android:src="@drawable/btn_bottom"
+            android:paddingBottom="10dp"
+            android:layout_below="@+id/rl_unlock"
+            android:layout_centerHorizontal="true" />
 
-        <LinearLayout
-            android:id="@+id/linearLayout_unlock"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="40dp"
-            android:background="@color/color_8A8A8A"
-            android:orientation="horizontal"
-            android:padding="5dp">
+        <RelativeLayout
+            android:id="@+id/rl_unlock"
+            android:layout_width="180dp"
+            android:layout_height="280dp"
+            android:background="@drawable/shape_dialog_home_bg"
+            android:visibility="visible">
 
             <TextView
-                android:layout_width="60dp"
+                android:id="@+id/tv_no_please_data"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="姓名"
+                android:layout_centerInParent="true"
+                android:textSize="12sp"
+                android:text="暂无请求"/>
+
+            <com.anlida.smartlock.widget.DrawableCenterTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/color_45AF2F"
+                android:drawableLeft="@drawable/img_4"
+                android:drawablePadding="10dp"
+                android:gravity="center_vertical"
+                android:padding="5dp"
+                android:text="请求解锁"
                 android:textColor="@android:color/white"
                 android:textSize="12sp" />
 
-            <TextView
-                android:layout_width="60dp"
+            <LinearLayout
+                android:id="@+id/linearLayout_unlock"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="时间"
-                android:textColor="@android:color/white"
-                android:textSize="12sp" />
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="40dp"
+                android:background="@color/color_8A8A8A"
+                android:orientation="horizontal"
+                android:padding="5dp">
+
+                <TextView
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="姓名"
+                    android:textColor="@android:color/white"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="时间"
+                    android:textColor="@android:color/white"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="全选"
+                    android:textColor="@android:color/white"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycler_view_unlock"
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:layout_below="@+id/linearLayout_unlock"
+                android:layout_centerHorizontal="true"
+                android:overScrollMode="never"
+                android:scrollbars="none"
+                android:visibility="visible" />
+
+
+            <LinearLayout
+                android:id="@+id/linear_layout_unlock_result"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/recycler_view_unlock"
+                android:layout_centerHorizontal="true"
+                android:background="@color/color_8A8A8A"
+                android:orientation="horizontal"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp">
+
+                <TextView
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="姓名"
+                    android:textColor="@android:color/white"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="处理时间"
+                    android:textColor="@android:color/white"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="操作结果"
+                    android:textColor="@android:color/white"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycler_view_unlock_result"
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:layout_below="@+id/linear_layout_unlock_result"
+                android:layout_centerHorizontal="true"
+                android:overScrollMode="never"
+                android:scrollbars="none"
+                android:visibility="visible" />
 
             <TextView
-                android:layout_width="60dp"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="全选"
-                android:textColor="@android:color/white"
-                android:textSize="12sp" />
+                android:id="@+id/tv_no_deal_data"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/linear_layout_unlock_result"
+                android:layout_centerInParent="true"
+                android:gravity="center_vertical"
+                android:textSize="12sp"
+                android:text="暂无请求" />
 
-        </LinearLayout>
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recycler_view_unlock"
-            android:layout_width="match_parent"
-            android:layout_height="120dp"
-            android:layout_below="@+id/linearLayout_unlock"
-            android:layout_centerHorizontal="true"
-            android:overScrollMode="never"
-            android:scrollbars="none"
-            android:visibility="visible" />
-
-
-        <LinearLayout
-            android:id="@+id/linear_layout_unlock_result"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/recycler_view_unlock"
-            android:layout_centerHorizontal="true"
-            android:background="@color/color_8A8A8A"
-            android:orientation="horizontal"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp">
-
-            <TextView
-                android:layout_width="60dp"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="姓名"
-                android:textColor="@android:color/white"
-                android:textSize="12sp" />
-
-            <TextView
-                android:layout_width="60dp"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="处理时间"
-                android:textColor="@android:color/white"
-                android:textSize="12sp" />
-
-            <TextView
-                android:layout_width="60dp"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="操作结果"
-                android:textColor="@android:color/white"
-                android:textSize="12sp" />
-
-        </LinearLayout>
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recycler_view_unlock_result"
-            android:layout_width="match_parent"
-            android:layout_height="120dp"
-            android:layout_below="@+id/linear_layout_unlock_result"
-            android:layout_centerHorizontal="true"
-            android:overScrollMode="never"
-            android:scrollbars="none"
-            android:visibility="visible" />
+        </RelativeLayout>
 
     </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_please_monitor_warn"
+        android:layout_width="260dp"
+        android:layout_height="250dp"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginTop="10dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/rl_monitor_warn"
+            android:layout_centerVertical="true"
+            android:paddingLeft="10dp"
+            android:layoutDirection="rtl">
+
+            <ImageView
+                android:id="@+id/iv_left_right"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/btn_right"
+                />
+
+        </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/rl_monitor_warn"
@@ -143,7 +203,16 @@
         android:layout_height="250dp"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:layout_marginRight="50dp">
+        android:background="@drawable/shape_dialog_home_bg"
+        android:visibility="visible">
+
+        <TextView
+            android:id="@+id/tv_no_warn_data"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:textSize="12sp"
+            android:text="暂无报警"/>
 
         <com.anlida.smartlock.widget.DrawableCenterTextView
             android:layout_width="match_parent"
@@ -155,7 +224,7 @@
             android:padding="5dp"
             android:text="监控预警"
             android:textColor="@android:color/white"
-            android:textSize="14sp" />
+            android:textSize="12sp" />
 
         <LinearLayout
             android:id="@+id/linearLayout"
@@ -266,6 +335,18 @@
             android:overScrollMode="never"
             android:scrollbars="none"
             android:visibility="visible" />
+
+        <TextView
+            android:id="@+id/tv_no_result_data"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:layout_below="@+id/linear_layout_result"
+            android:layout_centerInParent="true"
+            android:textSize="12sp"
+            android:text="暂无报警"/>
+
+    </RelativeLayout>
 
     </RelativeLayout>
 

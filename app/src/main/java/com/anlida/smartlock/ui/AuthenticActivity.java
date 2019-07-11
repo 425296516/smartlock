@@ -26,6 +26,7 @@ import com.anlida.smartlock.model.req.ReqManagerInfo;
 import com.anlida.smartlock.model.req.ReqWorkerInfo;
 import com.anlida.smartlock.network.HttpClient;
 import com.anlida.smartlock.ui.user.ClipImageActivity;
+import com.anlida.smartlock.utils.CountDownUtils;
 import com.anlida.smartlock.utils.DataWarehouse;
 import com.anlida.smartlock.utils.GetJsonDataUtil;
 import com.anlida.smartlock.utils.ToastUtils;
@@ -108,6 +109,8 @@ public class AuthenticActivity extends FMActivity {
     EditText etSphone;
     @BindView(R.id.tv_submit)
     TextView tvSubmit;
+    @BindView(R.id.tv_get_verficode)
+    TextView tvGetVerficode;
 
     @Override
     protected int getLayoutId() {
@@ -444,7 +447,10 @@ public class AuthenticActivity extends FMActivity {
                 .subscribe(new FMSubscriber<HttpResult>() {
                     @Override
                     public void onNext(HttpResult httpResult) {
-
+                        if("0".equals(httpResult.getCode())) {
+                            // 获取验证码成功之后开启倒计时
+                            CountDownUtils.startCountDown(getApplicationContext(), tvGetVerficode);
+                        }
                     }
                 });
     }
@@ -488,4 +494,9 @@ public class AuthenticActivity extends FMActivity {
         return false;
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        CountDownUtils.stopCountdown(context, tvGetVerficode);
+    }
 }

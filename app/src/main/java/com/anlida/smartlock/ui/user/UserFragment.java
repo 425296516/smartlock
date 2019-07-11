@@ -2,12 +2,13 @@ package com.anlida.smartlock.ui.user;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.anlida.smartlock.R;
@@ -18,6 +19,7 @@ import com.anlida.smartlock.model.req.ReqPersonCenter;
 import com.anlida.smartlock.model.req.ReqUpdatePhone;
 import com.anlida.smartlock.model.resp.RespPersonCenter;
 import com.anlida.smartlock.network.HttpClient;
+import com.anlida.smartlock.utils.CountDownUtils;
 import com.anlida.smartlock.utils.DataWarehouse;
 import com.anlida.smartlock.utils.ToastUtils;
 
@@ -27,7 +29,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
 public class UserFragment extends LazyLoadFragment {
-
 
     @BindView(R.id.tv_name)
     TextView tvName;
@@ -53,8 +54,6 @@ public class UserFragment extends LazyLoadFragment {
     TextView tvUrgentUpdate;
     @BindView(R.id.tv_urgent_work_id)
     TextView tvUrgentWorkId;
-    @BindView(R.id.container)
-    LinearLayout container;
     @BindView(R.id.et_phone)
     EditText etPhone;
     private String id, liableId;
@@ -64,9 +63,18 @@ public class UserFragment extends LazyLoadFragment {
         return R.layout.fragment_user;
     }
 
-    @OnClick({R.id.tv_update, R.id.tv_urgent_update})
+    @OnClick({R.id.btn_unlogin, R.id.tv_update, R.id.tv_urgent_update})
     public void onClick(View v) {
         switch (v.getId()) {
+
+            case R.id.btn_unlogin:
+
+                getActivity().finish();
+                startActivity(new Intent(context, LoginActivity.class));
+                DataWarehouse.setLogin(false);
+
+                break;
+
             case R.id.tv_update:
 
                 showUpdatePhone(v, getActivity());
@@ -80,6 +88,11 @@ public class UserFragment extends LazyLoadFragment {
                 break;
 
         }
+    }
+
+    @Override
+    protected boolean isNeedReload() {
+        return true;
     }
 
     @Override
@@ -112,12 +125,14 @@ public class UserFragment extends LazyLoadFragment {
                 .subscribe(new FMSubscriber<RespPersonCenter>() {
                     @Override
                     public void onNext(RespPersonCenter userInfo) {
-                        id = userInfo.getData().get(0).getId();
-                        tvName.setText(userInfo.getData().get(0).getName());
-                        tvWorkAddress.setText(userInfo.getData().get(0).getAddress());
-                        tvWorkClass.setText(userInfo.getData().get(0).getContructionName());
-                        tvPhone.setText(userInfo.getData().get(0).getPhone());
-                        tvWorkId.setText(userInfo.getData().get(0).getWorkId());
+                            if (isAdded() && userInfo.getCode() == 0) {
+                                id = userInfo.getData().get(0).getId();
+                                tvName.setText(userInfo.getData().get(0).getName());
+                                tvWorkAddress.setText(userInfo.getData().get(0).getAddress());
+                                tvWorkClass.setText(userInfo.getData().get(0).getContructionName());
+                                tvPhone.setText(userInfo.getData().get(0).getPhone());
+                                tvWorkId.setText(userInfo.getData().get(0).getWorkId());
+                            }
                     }
                 });
 
@@ -128,12 +143,14 @@ public class UserFragment extends LazyLoadFragment {
                 .subscribe(new FMSubscriber<RespPersonCenter>() {
                     @Override
                     public void onNext(RespPersonCenter userInfo) {
-                        liableId = userInfo.getData().get(0).getId();
-                        tvUrgentName.setText(userInfo.getData().get(0).getName());
-                        tvUrgentWorkAddress.setText(userInfo.getData().get(0).getAddress());
-                        tvWorkClassUrgent.setText(userInfo.getData().get(0).getContructionName());
-                        tvUrgentPhone.setText(userInfo.getData().get(0).getPhone());
-                        tvUrgentWorkId.setText(userInfo.getData().get(0).getWorkId());
+                        if (isAdded() && userInfo.getCode() == 0) {
+                            liableId = userInfo.getData().get(0).getId();
+                            tvUrgentName.setText(userInfo.getData().get(0).getName());
+                            tvUrgentWorkAddress.setText(userInfo.getData().get(0).getAddress());
+                            tvWorkClassUrgent.setText(userInfo.getData().get(0).getContructionName());
+                            tvUrgentPhone.setText(userInfo.getData().get(0).getPhone());
+                            tvUrgentWorkId.setText(userInfo.getData().get(0).getWorkId());
+                        }
                     }
                 });
     }
@@ -157,7 +174,16 @@ public class UserFragment extends LazyLoadFragment {
         tvGetCode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendCaptcha(etInputPhone.getText().toString());
+                HttpClient.getInstance().service.getVerifiCode(etInputPhone.getText().toString())
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new FMSubscriber<HttpResult>() {
+                            @Override
+                            public void onNext(HttpResult httpResult) {
+                                // 获取验证码成功之后开启倒计时
+                                CountDownUtils.startCountDown(context, tvGetCode);
+                            }
+                        });
             }
         });
 
@@ -177,21 +203,18 @@ public class UserFragment extends LazyLoadFragment {
             }
         });
 
+        alertDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                if(tvGetCode!=null) {
+                    CountDownUtils.stopCountdown(context, tvGetCode);
+                }
+            }
+        });
+
         return alertDialog;
     }
 
-
-    public void sendCaptcha(String mobile) {
-        HttpClient.getInstance().service.getVerifiCode(mobile)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new FMSubscriber<HttpResult>() {
-                    @Override
-                    public void onNext(HttpResult httpResult) {
-
-                    }
-                });
-    }
 
     public void updatePhone(String mobile, String code) {
         ReqUpdatePhone reqUpdatePhone = new ReqUpdatePhone(id, mobile, code);

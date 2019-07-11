@@ -3,6 +3,7 @@ package com.anlida.smartlock.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -14,11 +15,13 @@ import com.anlida.smartlock.R;
 import com.anlida.smartlock.base.FMActivity;
 import com.anlida.smartlock.base.FMSubscriber;
 import com.anlida.smartlock.event.QREvent;
+import com.anlida.smartlock.listener.OnSelectBloodTypeListener;
 import com.anlida.smartlock.model.HttpResult;
 import com.anlida.smartlock.model.req.ReqDeviceUse;
 import com.anlida.smartlock.network.HttpClient;
 import com.anlida.smartlock.utils.DataWarehouse;
 import com.anlida.smartlock.utils.ToastUtils;
+import com.anlida.smartlock.widget.BloodTypePopupWindow;
 import com.anlida.smartlock.zxing.QRCodeScanActivity;
 
 import org.greenrobot.eventbus.Subscribe;
@@ -43,8 +46,8 @@ public class ScanAddDeviceActivity extends FMActivity {
     EditText etInputPhone;
     @BindView(R.id.et_input_age)
     EditText etInputAge;
-    @BindView(R.id.et_input_bloodtype)
-    EditText etInputBloodtype;
+    @BindView(R.id.tv_input_bloodtype)
+    TextView tvInputBloodtype;
     @BindView(R.id.cb_man)
     RadioButton cbMan;
     @BindView(R.id.cb_woman)
@@ -58,12 +61,14 @@ public class ScanAddDeviceActivity extends FMActivity {
         return R.layout.activity_scan_add_device;
     }
 
-    @OnClick({R.id.iv_scan_code, R.id.tv_submit, R.id.cb_man, R.id.cb_woman})
+    @OnClick({R.id.iv_scan_code, R.id.tv_submit, R.id.cb_man, R.id.cb_woman,R.id.tv_input_bloodtype})
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.iv_scan_code:
 
-                startActivity(new Intent(context, QRCodeScanActivity.class));
+                Intent intent = new Intent(context, QRCodeScanActivity.class);
+                intent.putExtra("PAGE_TYPE","ScanAddDeviceActivity");
+                startActivity(intent);
 
                 break;
 
@@ -73,7 +78,7 @@ public class ScanAddDeviceActivity extends FMActivity {
                 }else {
                     addDeviceAndUser(DataWarehouse.getUserId(), mImei, etInputName.getText().toString(),
                             etInputWordid.getText().toString(), etInputIdcard.getText().toString(), etInputPhone.getText().toString(),
-                            etInputAge.getText().toString(), etInputBloodtype.getText().toString(), "1");
+                            etInputAge.getText().toString(), tvInputBloodtype.getText().toString(), "1");
                 }
                 break;
 
@@ -89,6 +94,24 @@ public class ScanAddDeviceActivity extends FMActivity {
 
                 cbMan.setChecked(false);
                 cbWoman.setChecked(true);
+
+                break;
+
+            case R.id.tv_input_bloodtype:
+
+                BloodTypePopupWindow bloodTypePopupWindow = new BloodTypePopupWindow(this, new OnSelectBloodTypeListener() {
+                    @Override
+                    public void onSelect(String bloodType) {
+                        tvInputBloodtype.setText(bloodType);
+                    }
+
+                    @Override
+                    public void onDismiss() {
+
+                    }
+                });
+
+                bloodTypePopupWindow.showAtLocation(tvInputBloodtype, Gravity.CENTER,400,-40);
 
                 break;
         }

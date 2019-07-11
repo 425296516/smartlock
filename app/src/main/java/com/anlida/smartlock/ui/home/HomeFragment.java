@@ -15,7 +15,10 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -39,13 +42,16 @@ import com.amap.api.services.geocoder.RegeocodeAddress;
 import com.amap.api.services.geocoder.RegeocodeQuery;
 import com.anlida.smartlock.R;
 import com.anlida.smartlock.adapter.MonitorWarnAdapter;
-import com.anlida.smartlock.base.FMFragment;
 import com.anlida.smartlock.base.FMSubscriber;
+import com.anlida.smartlock.base.LazyLoadFragment;
+import com.anlida.smartlock.model.req.ReqDeviceManager;
 import com.anlida.smartlock.model.req.ReqWarnRecord;
+import com.anlida.smartlock.model.resp.RespDeviceManager;
 import com.anlida.smartlock.model.resp.RespWarnLocation;
 import com.anlida.smartlock.model.resp.RespWarnRecord;
 import com.anlida.smartlock.network.HttpClient;
 import com.anlida.smartlock.ui.ScanAddDeviceActivity;
+import com.anlida.smartlock.utils.DataWarehouse;
 import com.anlida.smartlock.utils.ToastUtils;
 
 import java.util.ArrayList;
@@ -59,7 +65,7 @@ import io.reactivex.schedulers.Schedulers;
 
 import static android.location.LocationManager.GPS_PROVIDER;
 
-public class HomeFragment extends FMFragment implements AMap.OnMarkerClickListener, AMap.OnMapClickListener {
+public class HomeFragment extends LazyLoadFragment implements AMap.OnMarkerClickListener, AMap.OnMapClickListener {
 
     private static final String TAG = HomeFragment.class.getSimpleName();
 
@@ -75,10 +81,35 @@ public class HomeFragment extends FMFragment implements AMap.OnMarkerClickListen
     LinearLayout linearLayout;
     @BindView(R.id.linear_layout_result)
     LinearLayout linearLayoutResult;
+    @BindView(R.id.rl_please_monitor_warn)
+    RelativeLayout rlPleaseMonitorWarn;
     @BindView(R.id.rl_monitor_warn)
     RelativeLayout rlMonitorWarn;
     @BindView(R.id.rl_unlock)
     RelativeLayout rlUnlock;
+    @BindView(R.id.rl_please_unlock)
+    RelativeLayout rlPleaseUnlock;
+    @BindView(R.id.iv_left_right)
+    ImageView ivLeftRight;
+    @BindView(R.id.iv_top_bottom)
+    ImageView ivTopBottom;
+
+    @BindView(R.id.linearLayout_unlock)
+    LinearLayout linearLayoutUnlock;
+    @BindView(R.id.recycler_view_unlock)
+    RecyclerView recyclerViewUnlock;
+    @BindView(R.id.linear_layout_unlock_result)
+    LinearLayout linearLayoutUnlockResult;
+    @BindView(R.id.recycler_view_unlock_result)
+    RecyclerView recyclerViewUnlockResult;
+    @BindView(R.id.tv_no_please_data)
+    TextView tvNoPleaseData;
+    @BindView(R.id.tv_no_deal_data)
+    TextView tvNoDealData;
+    @BindView(R.id.tv_no_warn_data)
+    TextView tvNoWarnData;
+    @BindView(R.id.tv_no_result_data)
+    TextView tvNoResultData;
 
     private AMap aMap;
     private GeocodeSearch geocoderSearch;
@@ -101,8 +132,7 @@ public class HomeFragment extends FMFragment implements AMap.OnMarkerClickListen
     }
 
     @Override
-    public void initData() {
-
+    public void initView(View rootView) {
         checkLocationPermission();
 
         initGPS();
@@ -110,7 +140,40 @@ public class HomeFragment extends FMFragment implements AMap.OnMarkerClickListen
         init();
 
         initRecyclerView();
+    }
 
+    @Override
+    protected void initView() {
+
+    }
+
+    @Override
+    protected void loadData() {
+        getWarningRecord(1, 10);
+        getWarningLocation();
+        getDeviceManager(1, 10);
+    }
+
+    @Override
+    protected boolean isNeedReload() {
+        return true;
+    }
+
+    @Override
+    public void initData() {
+
+    }
+
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (hidden) {   // 不在最前端显示 相当于调用了onPause();
+            mapView.setVisibility(View.GONE);
+            return;
+        } else {  // 在最前端显示 相当于调用了onResume();
+            mapView.setVisibility(View.VISIBLE);
+        }
     }
 
     MonitorWarnAdapter warnRecordAdapter, wrAdapterResult;
@@ -126,8 +189,6 @@ public class HomeFragment extends FMFragment implements AMap.OnMarkerClickListen
         wrAdapterResult = new MonitorWarnAdapter(getActivity(), 2);//默认创建一个数组，不创建会有空指针异常
         recyclerViewResult.setAdapter(wrAdapterResult);
 
-        getWarningRecord(1, 10);
-        getWarningLocation();
     }
 
     private void getWarningRecord(int pageNum, int pageSize) {
@@ -138,7 +199,7 @@ public class HomeFragment extends FMFragment implements AMap.OnMarkerClickListen
                 .subscribe(new FMSubscriber<RespWarnRecord>() {
                     @Override
                     public void onNext(RespWarnRecord respWarnRecord) {
-                        if(respWarnRecord.getData().getList().size()>0) {
+                        if (respWarnRecord.getData().getList().size() > 0) {
                             rlMonitorWarn.setVisibility(View.VISIBLE);
                             rlUnlock.setVisibility(View.VISIBLE);
                             List<RespWarnRecord.DataBean.ListBean> listBeans = new ArrayList<>();
@@ -153,9 +214,24 @@ public class HomeFragment extends FMFragment implements AMap.OnMarkerClickListen
                             }
                             warnRecordAdapter.setData(listBeans);
                             wrAdapterResult.setData(dealBeans);
-                        }else {
+
+
+                            tvNoPleaseData.setVisibility(View.GONE);
+                            tvNoDealData.setVisibility(View.GONE);
+                            tvNoWarnData.setVisibility(View.GONE);
+                            tvNoWarnData.setVisibility(View.GONE);
+
+                        } else {
+                            ivLeftRight.setImageResource(R.drawable.btn_left);
+                            ivTopBottom.setImageResource(R.drawable.btn_top);
+
                             rlMonitorWarn.setVisibility(View.GONE);
                             rlUnlock.setVisibility(View.GONE);
+
+                            tvNoPleaseData.setVisibility(View.VISIBLE);
+                            tvNoDealData.setVisibility(View.VISIBLE);
+                            tvNoWarnData.setVisibility(View.VISIBLE);
+                            tvNoWarnData.setVisibility(View.VISIBLE);
                         }
                     }
                 });
@@ -176,6 +252,27 @@ public class HomeFragment extends FMFragment implements AMap.OnMarkerClickListen
                 });
     }
 
+
+    private void getDeviceManager(int pageNum, int pageSize) {
+        ReqDeviceManager reqDeviceManager = new ReqDeviceManager(pageNum, pageSize, "", DataWarehouse.getUserId());
+        HttpClient.getInstance().service.getDeviceManager(reqDeviceManager)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new FMSubscriber<RespDeviceManager>() {
+                    @Override
+                    public void onNext(RespDeviceManager respDeviceManager) {
+                        if (respDeviceManager.getCode() == 0) {
+                            if (respDeviceManager.getData().getList().size() > 0) {
+                                btnDeviceLock.setVisibility(View.GONE);
+                            } else {
+                                btnDeviceLock.setVisibility(View.VISIBLE);
+                            }
+                        }
+                    }
+                });
+    }
+
+
     /**
      * 在地图上添加的marker
      */
@@ -195,31 +292,121 @@ public class HomeFragment extends FMFragment implements AMap.OnMarkerClickListen
         }
     }
 
-    @OnClick({R.id.btn_device_lock})
-    public void onClick(View v) {
+    @OnClick({R.id.btn_device_lock, R.id.iv_top_bottom, R.id.iv_left_right})
+    public void onViewClicked(View v) {
         switch (v.getId()) {
             case R.id.btn_device_lock:
 
                 startActivity(new Intent(context, ScanAddDeviceActivity.class));
 
                 break;
+
+            case R.id.iv_top_bottom:
+
+                if (rlUnlock.getVisibility() == View.VISIBLE) {
+                    rlPleaseUnlock.setVisibility(View.GONE);
+                    Animation animation = AnimationUtils.loadAnimation(context, R.anim.unlock_hide);
+                    rlPleaseUnlock.startAnimation(animation);
+
+                    animation.setAnimationListener(new Animation.AnimationListener() {
+                        @Override
+                        public void onAnimationStart(Animation animation) {
+
+                        }
+
+                        @Override
+                        public void onAnimationEnd(Animation animation) {
+                            rlPleaseUnlock.setVisibility(View.VISIBLE);
+                            rlUnlock.setVisibility(View.GONE);
+                            ivTopBottom.setImageResource(R.drawable.btn_top);
+                        }
+
+                        @Override
+                        public void onAnimationRepeat(Animation animation) {
+
+                        }
+                    });
+                } else {
+                    rlUnlock.setVisibility(View.VISIBLE);
+                    rlPleaseUnlock.setVisibility(View.VISIBLE);
+                    Animation animation = AnimationUtils.loadAnimation(context, R.anim.unlock_show);
+                    rlPleaseUnlock.startAnimation(animation);
+
+                    animation.setAnimationListener(new Animation.AnimationListener() {
+                        @Override
+                        public void onAnimationStart(Animation animation) {
+
+                        }
+
+                        @Override
+                        public void onAnimationEnd(Animation animation) {
+                            ivTopBottom.setImageResource(R.drawable.btn_bottom);
+                        }
+
+                        @Override
+                        public void onAnimationRepeat(Animation animation) {
+
+                        }
+                    });
+
+                }
+
+                break;
+
+            case R.id.iv_left_right:
+
+                if (rlMonitorWarn.getVisibility() == View.VISIBLE) {
+                    rlPleaseMonitorWarn.setVisibility(View.GONE);
+
+                    Animation animation = AnimationUtils.loadAnimation(context, R.anim.monitor_warn_hide);
+                    rlPleaseMonitorWarn.startAnimation(animation);
+
+                    animation.setAnimationListener(new Animation.AnimationListener() {
+                        @Override
+                        public void onAnimationStart(Animation animation) {
+
+                        }
+
+                        @Override
+                        public void onAnimationEnd(Animation animation) {
+                            rlPleaseMonitorWarn.setVisibility(View.VISIBLE);
+                            rlMonitorWarn.setVisibility(View.GONE);
+                            ivLeftRight.setImageResource(R.drawable.btn_left);
+                        }
+
+                        @Override
+                        public void onAnimationRepeat(Animation animation) {
+
+                        }
+                    });
+                } else {
+                    rlMonitorWarn.setVisibility(View.VISIBLE);
+                    rlPleaseMonitorWarn.setVisibility(View.VISIBLE);
+
+                    Animation animation = AnimationUtils.loadAnimation(context, R.anim.monitor_warn_show);
+                    rlPleaseMonitorWarn.startAnimation(animation);
+
+
+                    animation.setAnimationListener(new Animation.AnimationListener() {
+                        @Override
+                        public void onAnimationStart(Animation animation) {
+
+                        }
+
+                        @Override
+                        public void onAnimationEnd(Animation animation) {
+                            ivLeftRight.setImageResource(R.drawable.btn_right);
+                        }
+
+                        @Override
+                        public void onAnimationRepeat(Animation animation) {
+
+                        }
+                    });
+                }
+
+                break;
         }
-    }
-
-    @Override
-    public void onHiddenChanged(boolean hidden) {
-        super.onHiddenChanged(hidden);
-        if (hidden) {   // 不在最前端显示 相当于调用了onPause();
-            mapView.setVisibility(View.GONE);
-            return;
-        } else {  // 在最前端显示 相当于调用了onResume();
-            mapView.setVisibility(View.VISIBLE);
-        }
-    }
-
-    @Override
-    public void initView(View rootView) {
-
     }
 
 
@@ -347,20 +534,6 @@ public class HomeFragment extends FMFragment implements AMap.OnMarkerClickListen
         return poiDistance;
     }
 
-    @OnClick({R.id.btn_device_lock,})
-    public void onViewClicked(View view) {
-
-        switch (view.getId()) {
-
-            case R.id.btn_device_lock://搜索
-
-
-                break;
-
-        }
-    }
-
-
     private void initGPS() {
         LocationManager mLocationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         // 判断GPS模块是否开启，如果没有则开启
@@ -423,6 +596,7 @@ public class HomeFragment extends FMFragment implements AMap.OnMarkerClickListen
     public void onResume() {
         super.onResume();
         mapView.onResume();
+
     }
 
     /**

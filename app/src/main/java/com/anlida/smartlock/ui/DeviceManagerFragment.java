@@ -63,7 +63,6 @@ public class DeviceManagerFragment extends LazyLoadFragment {
 
     }
 
-
     @Override
     protected void onRightClick() {
 
@@ -117,6 +116,11 @@ public class DeviceManagerFragment extends LazyLoadFragment {
     @Override
     protected void initView() {
 
+    }
+
+    @Override
+    protected boolean isNeedReload() {
+        return true;
     }
 
     @Override
