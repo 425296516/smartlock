@@ -2,17 +2,21 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:paddingTop="5dp">
 
     <EditText
         android:id="@+id/et_search"
         android:layout_width="180dp"
         android:layout_height="30dp"
+        android:layout_alignTop="@+id/tv_search"
         android:layout_marginLeft="50dp"
         android:background="@drawable/shape_search_bg_left"
         android:drawableLeft="@drawable/ic_search_black_12dp"
         android:drawablePadding="10dp"
         android:hint="请输入姓名或身份证号"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
         android:paddingLeft="10dp"
         android:textSize="12sp" />
 
@@ -55,7 +59,7 @@
         android:padding="0dp"
         android:text="添加设备信息"
         android:textColor="@color/color_1654E2"
-        android:textSize="14sp" />
+        android:textSize="16sp" />
 
 
     <LinearLayout
@@ -159,6 +163,15 @@
             android:textSize="15sp" />
 
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_no_data"
+        android:layout_width="match_parent"
+        android:layout_height="202dp"
+        android:layout_below="@+id/linearLayout"
+        android:gravity="center"
+        android:text="暂无人员锁扣信息"
+        android:visibility="gone"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"

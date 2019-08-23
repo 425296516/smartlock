@@ -30,7 +30,7 @@ public class HttpClient {
     private static final String TAG = HttpClient.class.getSimpleName();
     public static final String BASE_URL = "http://47.111.112.30:8085/"; //测试IP
     public static final String BASE_URL_CONTROL = "http://47.111.112.30:8086/"; //测试IP
-
+    //public static final String BASE_URL_CONTROL = "http://2o464010g0.zicp.vip:39724"; //
     public Retrofit retrofit;
     public RestAPI service;
 
@@ -79,6 +79,7 @@ public class HttpClient {
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .connectTimeout(10, TimeUnit.SECONDS)//超过时间
                 .readTimeout(10, TimeUnit.SECONDS)
+
                 .addNetworkInterceptor(mInterceptor)
                 .addInterceptor(interceptor)
                 //.addInterceptor(SOCKET_TIMEOUT_INTERCEPTOR)

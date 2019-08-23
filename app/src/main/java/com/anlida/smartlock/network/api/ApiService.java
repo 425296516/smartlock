@@ -11,7 +11,7 @@ import retrofit2.Retrofit;
 public class ApiService {
 
     public static final String BASE_URL = "http://47.111.112.30:8085/"; //测试IP
-    //public static final String BASE_URL = "http://40.73.25.204"; //
+    //public static final String BASE_URL = "http://2o464010g0.zicp.vip:39724"; //
     private static CarService carService;
 
     private static CommonService commonService;

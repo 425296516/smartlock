@@ -125,11 +125,11 @@ public class UserFragment extends LazyLoadFragment {
                 .subscribe(new FMSubscriber<RespPersonCenter>() {
                     @Override
                     public void onNext(RespPersonCenter userInfo) {
-                            if (isAdded() && userInfo.getCode() == 0) {
+                            if (isAdded() && userInfo.getCode() == 0 && userInfo.getData().size() > 0) {
                                 id = userInfo.getData().get(0).getId();
                                 tvName.setText(userInfo.getData().get(0).getName());
                                 tvWorkAddress.setText(userInfo.getData().get(0).getAddress());
-                                tvWorkClass.setText(userInfo.getData().get(0).getContructionName());
+                                tvWorkClass.setText(userInfo.getData().get(0).getWorkType());
                                 tvPhone.setText(userInfo.getData().get(0).getPhone());
                                 tvWorkId.setText(userInfo.getData().get(0).getWorkId());
                             }
@@ -143,11 +143,11 @@ public class UserFragment extends LazyLoadFragment {
                 .subscribe(new FMSubscriber<RespPersonCenter>() {
                     @Override
                     public void onNext(RespPersonCenter userInfo) {
-                        if (isAdded() && userInfo.getCode() == 0) {
+                        if (isAdded() && userInfo.getCode() == 0 && userInfo.getData().size()>0) {
                             liableId = userInfo.getData().get(0).getId();
                             tvUrgentName.setText(userInfo.getData().get(0).getName());
                             tvUrgentWorkAddress.setText(userInfo.getData().get(0).getAddress());
-                            tvWorkClassUrgent.setText(userInfo.getData().get(0).getContructionName());
+                            tvWorkClassUrgent.setText(userInfo.getData().get(0).getWorkType());
                             tvUrgentPhone.setText(userInfo.getData().get(0).getPhone());
                             tvUrgentWorkId.setText(userInfo.getData().get(0).getWorkId());
                         }

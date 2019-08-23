@@ -7,37 +7,35 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.anlida.smartlock.R;
-import com.anlida.smartlock.base.FMSubscriber;
-import com.anlida.smartlock.event.UpdateWarnRecord;
-import com.anlida.smartlock.model.req.ReqDealWarning;
 import com.anlida.smartlock.model.resp.RespWarnRecord;
-import com.anlida.smartlock.network.HttpClient;
-import com.anlida.smartlock.utils.DialogUtil;
-import com.anlida.smartlock.utils.ToastUtils;
 
-import org.greenrobot.eventbus.EventBus;
-
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.internal.DebouncingOnClickListener;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 
-public class MonitorWarnAdapter extends RecyclerView.Adapter<MonitorWarnAdapter.MonitorWarnViewHolder> {
-
+public class UnLockAdapter extends RecyclerView.Adapter<UnLockAdapter.UnLockViewHolder> {
     private List<RespWarnRecord.DataBean.ListBean> listBeans;
     private OnClickListener onClickListener;
     private Activity mActivity;
     private int mType;
+    private boolean mAllSelect;
 
-    public MonitorWarnAdapter(Activity activity, int type) {
+    public UnLockAdapter(Activity activity, int type) {
         mActivity = activity;
         mType = type;
+    }
+
+    public void setAllSelect(boolean allSelect) {
+        mAllSelect = allSelect;
+        notifyDataSetChanged();
     }
 
     public void setData(List<RespWarnRecord.DataBean.ListBean> listBeans) {
@@ -54,11 +52,23 @@ public class MonitorWarnAdapter extends RecyclerView.Adapter<MonitorWarnAdapter.
         this.onClickListener = onClickListener;
     }
 
+    public ArrayList<String> getSelectList(){
+        ArrayList arrayList = new ArrayList();
+        if(!hashSet.isEmpty()){
+            for(String s: hashSet) {
+                arrayList.add(s);
+            }
+        }
+        return arrayList;
+    }
+
+    private HashSet<String> hashSet = new HashSet<>();
+
     @NonNull
     @Override
-    public MonitorWarnViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_monitor_warn, parent, false);
-        MonitorWarnViewHolder holder = new MonitorWarnViewHolder(v);
+    public UnLockViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_please_unlock, parent, false);
+        UnLockViewHolder holder = new UnLockViewHolder(v);
         holder.itemView.setOnClickListener(new DebouncingOnClickListener() {
             @Override
             public void doClick(View view) {
@@ -71,9 +81,7 @@ public class MonitorWarnAdapter extends RecyclerView.Adapter<MonitorWarnAdapter.
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MonitorWarnViewHolder holder, int position) {
-
-        holder.tvWarn.setText(listBeans.get(position).getWarningType());
+    public void onBindViewHolder(@NonNull UnLockViewHolder holder, int position) {
         holder.tvName.setText(listBeans.get(position).getUname());
         if ("1".equals(listBeans.get(position).getStatus())) {
             String time = listBeans.get(position).getCreateDate();
@@ -87,48 +95,43 @@ public class MonitorWarnAdapter extends RecyclerView.Adapter<MonitorWarnAdapter.
             }
         }
 
+        if (mAllSelect) {
+            for (int i=0;i<listBeans.size();i++){
+                hashSet.add(listBeans.get(i).getImei());
+            }
+            holder.ivSelect.setImageResource(R.drawable.btn_blue_pre);
+        } else {
+            for (int i=0;i<listBeans.size();i++){
+                hashSet.remove(listBeans.get(i).getImei());
+            }
+            holder.ivSelect.setImageResource(R.drawable.btn_blue);
+        }
+
+
         if (mType == 1) {
-            holder.tvDeal.setVisibility(View.VISIBLE);
+            holder.ivSelect.setVisibility(View.VISIBLE);
             holder.tvDealResult.setVisibility(View.GONE);
-            holder.tvDeal.setOnClickListener(new View.OnClickListener() {
+
+            holder.ivSelect.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    DialogUtil.showDialogunLock(mActivity, listBeans.get(position).getUname(),listBeans.get(position).getPhone(),new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            DialogUtil.showDialogunLockConfirm(mActivity, new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    dealWarningRecord(listBeans.get(position).getId()+"","2");
-                                }
-                            });
-                        }
-                    });
+                    holder.ivSelect.setSelected(!holder.ivSelect.isSelected());
+                    if (holder.ivSelect.isSelected()) {
+                        holder.ivSelect.setImageResource(R.drawable.btn_blue_pre);
+                        hashSet.add(listBeans.get(position).getImei());
+                    } else {
+                        hashSet.remove(listBeans.get(position).getImei());
+                        holder.ivSelect.setImageResource(R.drawable.btn_blue);
+                    }
                 }
             });
 
         } else {
-            holder.tvDeal.setVisibility(View.GONE);
+            holder.ivSelect.setVisibility(View.GONE);
+
             holder.tvDealResult.setVisibility(View.VISIBLE);
         }
 
-    }
-
-    private void dealWarningRecord(String id, String status) {
-        ReqDealWarning reqDealWarning = new ReqDealWarning(id, status);
-        HttpClient.getInstance().service.dealWarningRecord(reqDealWarning)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new FMSubscriber<RespWarnRecord>() {
-                    @Override
-                    public void onNext(RespWarnRecord respDeviceManager) {
-                        if(0 ==respDeviceManager.getCode()){
-                            ToastUtils.show(mActivity,"处理成功");
-                            UpdateWarnRecord event = new UpdateWarnRecord();
-                            EventBus.getDefault().post(event);
-                        }
-                    }
-                });
     }
 
     @Override
@@ -140,20 +143,18 @@ public class MonitorWarnAdapter extends RecyclerView.Adapter<MonitorWarnAdapter.
         }
     }
 
-    static class MonitorWarnViewHolder extends RecyclerView.ViewHolder {
+    static class UnLockViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.tv_warn)
-        TextView tvWarn;
         @BindView(R.id.tv_name)
         TextView tvName;
         @BindView(R.id.tv_time)
         TextView tvTime;
         @BindView(R.id.tv_deal_result)
         TextView tvDealResult;
-        @BindView(R.id.tv_deal)
-        TextView tvDeal;
+        @BindView(R.id.iv_select)
+        ImageView ivSelect;
 
-        public MonitorWarnViewHolder(View itemView) {
+        public UnLockViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }

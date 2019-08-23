@@ -10,11 +10,11 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
-import com.anlida.smartlock.MainActivity;
 import com.anlida.smartlock.R;
 import com.anlida.smartlock.base.FMActivity;
 import com.anlida.smartlock.base.FMSubscriber;
 import com.anlida.smartlock.event.QREvent;
+import com.anlida.smartlock.event.UpdateDeviceManager;
 import com.anlida.smartlock.listener.OnSelectBloodTypeListener;
 import com.anlida.smartlock.model.HttpResult;
 import com.anlida.smartlock.model.req.ReqDeviceUse;
@@ -24,6 +24,7 @@ import com.anlida.smartlock.utils.ToastUtils;
 import com.anlida.smartlock.widget.BloodTypePopupWindow;
 import com.anlida.smartlock.zxing.QRCodeScanActivity;
 
+import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
@@ -73,12 +74,15 @@ public class ScanAddDeviceActivity extends FMActivity {
                 break;
 
             case R.id.tv_submit:
-                if(TextUtils.isEmpty(mImei)){
-                    ToastUtils.show(context,"请扫描设备二维码");
-                }else {
-                    addDeviceAndUser(DataWarehouse.getUserId(), mImei, etInputName.getText().toString(),
+                if(!TextUtils.isEmpty(mImei) && !TextUtils.isEmpty(etInputName.getText().toString())&&!TextUtils.isEmpty(etInputWordid.getText().toString())
+                        && !TextUtils.isEmpty(etInputIdcard.getText().toString()) && !TextUtils.isEmpty(etInputPhone.getText().toString())
+                        &&!TextUtils.isEmpty(etInputAge.getText().toString()) && !TextUtils.isEmpty(tvInputBloodtype.getText().toString())){
+
+                        addDeviceAndUser(DataWarehouse.getUserId(), mImei, etInputName.getText().toString(),
                             etInputWordid.getText().toString(), etInputIdcard.getText().toString(), etInputPhone.getText().toString(),
-                            etInputAge.getText().toString(), tvInputBloodtype.getText().toString(), "1");
+                            etInputAge.getText().toString(), tvInputBloodtype.getText().toString(), cbMan.isChecked() ?"1" : "2");
+                }else {
+                    ToastUtils.show(context,"请填写所有数据");
                 }
                 break;
 
@@ -117,12 +121,12 @@ public class ScanAddDeviceActivity extends FMActivity {
         }
     }
 
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void bindDeviceLock(QREvent event) {
         String result = event.getResult();
         mImei = result.replace("imei:","");
         ToastUtils.show(context,"扫描成功");
-
     }
 
     @Override
@@ -147,9 +151,9 @@ public class ScanAddDeviceActivity extends FMActivity {
                 .subscribe(new FMSubscriber<HttpResult>() {
                     @Override
                     public void onNext(HttpResult httpResult) {
-                        MainActivity.start(context);
+                        UpdateDeviceManager event = new UpdateDeviceManager();
+                        EventBus.getDefault().post(event);
                         finish();
-
                     }
                 });
     }

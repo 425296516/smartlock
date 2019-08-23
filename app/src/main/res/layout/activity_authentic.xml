@@ -17,7 +17,8 @@
         android:layout_marginTop="80dp"
         android:layout_marginLeft="150dp"
         android:background="@drawable/shape_et_bg_e2ecff"
-        android:hint="请选择省市县"
+        android:hint="请选择工作地区"
+        android:drawableRight="@drawable/ic_star_black_6dp"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
         android:textColor="@color/color_8C8686"
@@ -44,23 +45,9 @@
             android:drawableLeft="@drawable/shape_rec_1654e2"
             android:drawablePadding="10dp"
             android:gravity="center_vertical"
-            android:text="主要责任人信息"
+            android:text="主要安全员信息"
             android:textColor="@color/color_1654E2"
             android:textSize="14sp" />
-
-        <EditText
-            android:id="@+id/et_work_name"
-            android:layout_width="250dp"
-            android:layout_height="30dp"
-            android:layout_gravity="center"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/shape_et_bg_e2ecff"
-            android:drawableRight="@drawable/ic_star_black_6dp"
-            android:hint="请输入工地名称"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:textColor="@color/color_8C8686"
-            android:textSize="12sp" />
 
         <EditText
             android:id="@+id/et_bys"
@@ -77,6 +64,22 @@
             android:textSize="12sp" />
 
         <EditText
+            android:id="@+id/et_work_name"
+            android:layout_width="250dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/shape_et_bg_e2ecff"
+            android:drawableRight="@drawable/ic_star_black_6dp"
+            android:hint="请输入工地名称"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:textColor="@color/color_8C8686"
+            android:textSize="12sp" />
+
+
+
+        <EditText
             android:id="@+id/et_worktype"
             android:layout_width="250dp"
             android:layout_height="30dp"
@@ -84,7 +87,7 @@
             android:layout_marginTop="10dp"
             android:background="@drawable/shape_et_bg_e2ecff"
             android:drawableRight="@drawable/ic_star_black_6dp"
-            android:hint="请输入工种"
+            android:hint="请输入工作部门"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:textColor="@color/color_8C8686"
@@ -244,7 +247,7 @@
                     android:layout_centerInParent="true"
                     android:drawableTop="@drawable/icon_shenfenzheng"
                     android:drawablePadding="5dp"
-                    android:hint="反面照片"
+                    android:hint="背面照片"
                     android:textColor="@color/color_8C8686"
                     android:textSize="12sp" />
 
@@ -282,23 +285,9 @@
             android:drawableLeft="@drawable/shape_rec_1654e2"
             android:drawablePadding="10dp"
             android:gravity="center_vertical"
-            android:text="协同责任人信息"
+            android:text="协同安全员信息"
             android:textColor="@color/color_1654E2"
             android:textSize="14sp" />
-
-        <EditText
-            android:id="@+id/et_saddress"
-            android:layout_width="250dp"
-            android:layout_height="30dp"
-            android:layout_gravity="center"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/shape_et_bg_e2ecff"
-            android:drawableRight="@drawable/ic_star_black_6dp"
-            android:hint="请输入工地名称"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:textColor="@color/color_8C8686"
-            android:textSize="12sp" />
 
         <EditText
             android:id="@+id/et_sbs"
@@ -315,6 +304,20 @@
             android:textSize="12sp" />
 
         <EditText
+            android:id="@+id/et_saddress"
+            android:layout_width="250dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/shape_et_bg_e2ecff"
+            android:drawableRight="@drawable/ic_star_black_6dp"
+            android:hint="请输入工地名称"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:textColor="@color/color_8C8686"
+            android:textSize="12sp" />
+
+        <EditText
             android:id="@+id/et_sworkType"
             android:layout_width="250dp"
             android:layout_height="30dp"
@@ -322,7 +325,7 @@
             android:layout_marginTop="10dp"
             android:background="@drawable/shape_et_bg_e2ecff"
             android:drawableRight="@drawable/ic_star_black_6dp"
-            android:hint="请输入工种"
+            android:hint="请输入工作部门"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:textColor="@color/color_8C8686"

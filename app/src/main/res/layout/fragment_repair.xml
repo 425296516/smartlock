@@ -46,6 +46,8 @@
         android:layout_height="200dp"
         android:layout_alignParentRight="true"
         android:layout_marginTop="50dp"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
         android:background="@drawable/shape_et_bg_e2ecff"
         android:gravity="left"
         android:hint="请输入报修报损的原因"

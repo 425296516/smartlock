@@ -12,10 +12,14 @@ import android.widget.TextView;
 
 import com.anlida.smartlock.R;
 import com.anlida.smartlock.base.FMSubscriber;
+import com.anlida.smartlock.event.UpdateWarnRecord;
 import com.anlida.smartlock.model.req.ReqDealWarning;
 import com.anlida.smartlock.model.resp.RespWarnRecord;
 import com.anlida.smartlock.network.HttpClient;
 import com.anlida.smartlock.utils.DialogUtil;
+import com.anlida.smartlock.utils.ToastUtils;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.List;
 
@@ -77,8 +81,17 @@ public class WarnRecordAdapter extends RecyclerView.Adapter<WarnRecordAdapter.Wa
             holder.rlDeal.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    dealWarningRecord(listBeans.get(position).getId()+"","2");
-                    DialogUtil.showDialogunLock(mActivity);
+                    DialogUtil.showDialogunLock(mActivity, listBeans.get(position).getUname(),listBeans.get(position).getPhone(),new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            DialogUtil.showDialogunLockConfirm(mActivity, new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    dealWarningRecord(listBeans.get(position).getId()+"","2");
+                                }
+                            });
+                        }
+                    });
                 }
             });
 
@@ -97,7 +110,11 @@ public class WarnRecordAdapter extends RecyclerView.Adapter<WarnRecordAdapter.Wa
                 .subscribe(new FMSubscriber<RespWarnRecord>() {
                     @Override
                     public void onNext(RespWarnRecord respDeviceManager) {
-
+                       if(0 ==respDeviceManager.getCode()){
+                           ToastUtils.show(mActivity,"处理成功");
+                           UpdateWarnRecord event = new UpdateWarnRecord();
+                           EventBus.getDefault().post(event);
+                        }
                     }
                 });
 

@@ -44,7 +44,12 @@ public class RepairFragment extends LazyLoadFragment {
 
     @Override
     public void initData() {
-
+        etRepairBecause.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                etRepairBecause.setCursorVisible(true);
+            }
+        });
     }
 
     @Override
@@ -71,8 +76,11 @@ public class RepairFragment extends LazyLoadFragment {
 
             case R.id.tv_submit:
 
-                uploadRepairInfo(etRepairBecause.getText().toString(), etInputImei.getText().toString());
-
+                if(!TextUtils.isEmpty(etRepairBecause.getText().toString()) && !TextUtils.isEmpty(etInputImei.getText().toString())) {
+                    uploadRepairInfo(etRepairBecause.getText().toString(), etInputImei.getText().toString());
+                }else {
+                    ToastUtils.show(context,"请输入IMEI和报修报损原因");
+                }
                 break;
         }
     }
@@ -97,8 +105,13 @@ public class RepairFragment extends LazyLoadFragment {
     }
 
     @Override
-    protected void loadData() {
+    protected boolean isNeedReload() {
+        return true;
+    }
 
+    @Override
+    protected void loadData() {
+        etRepairBecause.setCursorVisible(false);//隐藏光标
     }
 
     public void uploadRepairInfo(String causeOfDamage, String imei) {

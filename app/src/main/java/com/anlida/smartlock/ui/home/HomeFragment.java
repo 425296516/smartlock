@@ -25,7 +25,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.amap.api.maps.AMap;
-import com.amap.api.maps.AMapUtils;
 import com.amap.api.maps.CameraUpdate;
 import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.MapView;
@@ -35,24 +34,27 @@ import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.Marker;
 import com.amap.api.maps.model.MarkerOptions;
 import com.amap.api.maps.model.MyLocationStyle;
-import com.amap.api.services.core.AMapException;
-import com.amap.api.services.core.LatLonPoint;
 import com.amap.api.services.geocoder.GeocodeSearch;
-import com.amap.api.services.geocoder.RegeocodeAddress;
-import com.amap.api.services.geocoder.RegeocodeQuery;
 import com.anlida.smartlock.R;
 import com.anlida.smartlock.adapter.MonitorWarnAdapter;
+import com.anlida.smartlock.adapter.UnLockAdapter;
 import com.anlida.smartlock.base.FMSubscriber;
 import com.anlida.smartlock.base.LazyLoadFragment;
-import com.anlida.smartlock.model.req.ReqDeviceManager;
+import com.anlida.smartlock.event.UpdateWarnRecord;
+import com.anlida.smartlock.model.HttpResult;
+import com.anlida.smartlock.model.req.ReqUnLockList;
 import com.anlida.smartlock.model.req.ReqWarnRecord;
-import com.anlida.smartlock.model.resp.RespDeviceManager;
+import com.anlida.smartlock.model.resp.RespRemoteToken;
 import com.anlida.smartlock.model.resp.RespWarnLocation;
 import com.anlida.smartlock.model.resp.RespWarnRecord;
 import com.anlida.smartlock.network.HttpClient;
 import com.anlida.smartlock.ui.ScanAddDeviceActivity;
 import com.anlida.smartlock.utils.DataWarehouse;
+import com.anlida.smartlock.utils.DialogUtil;
 import com.anlida.smartlock.utils.ToastUtils;
+
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -110,6 +112,10 @@ public class HomeFragment extends LazyLoadFragment implements AMap.OnMarkerClick
     TextView tvNoWarnData;
     @BindView(R.id.tv_no_result_data)
     TextView tvNoResultData;
+    @BindView(R.id.tv_all_select)
+    TextView tvAllSelect;
+    @BindView(R.id.btn_unlock)
+    Button btnUnlock;
 
     private AMap aMap;
     private GeocodeSearch geocoderSearch;
@@ -149,9 +155,10 @@ public class HomeFragment extends LazyLoadFragment implements AMap.OnMarkerClick
 
     @Override
     protected void loadData() {
-        getWarningRecord(1, 10);
+        getWarningRecord(1, 300);
         getWarningLocation();
-        getDeviceManager(1, 10);
+
+        getUnlockList(1, 300);
     }
 
     @Override
@@ -177,6 +184,7 @@ public class HomeFragment extends LazyLoadFragment implements AMap.OnMarkerClick
     }
 
     MonitorWarnAdapter warnRecordAdapter, wrAdapterResult;
+    UnLockAdapter unLockAdapter, unLockResultAdapter;
 
     public void initRecyclerView() {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
@@ -189,7 +197,40 @@ public class HomeFragment extends LazyLoadFragment implements AMap.OnMarkerClick
         wrAdapterResult = new MonitorWarnAdapter(getActivity(), 2);//默认创建一个数组，不创建会有空指针异常
         recyclerViewResult.setAdapter(wrAdapterResult);
 
+        LinearLayoutManager unLockllm = new LinearLayoutManager(getActivity());
+        recyclerViewUnlock.setLayoutManager(unLockllm);
+        unLockAdapter = new UnLockAdapter(getActivity(), 1);//默认创建一个数组，不创建会有空指针异常
+        recyclerViewUnlock.setAdapter(unLockAdapter);
+
+        LinearLayoutManager unLockllmResult = new LinearLayoutManager(getActivity());
+        recyclerViewUnlockResult.setLayoutManager(unLockllmResult);
+        unLockResultAdapter = new UnLockAdapter(getActivity(), 2);//默认创建一个数组，不创建会有空指针异常
+        recyclerViewUnlockResult.setAdapter(unLockResultAdapter);
+
+        tvAllSelect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (tvAllSelect.isSelected()) {
+                    tvAllSelect.setSelected(false);
+                } else {
+                    tvAllSelect.setSelected(true);
+                }
+                unLockAdapter.setAllSelect(tvAllSelect.isSelected());
+            }
+        });
+
     }
+
+    @Override
+    protected boolean needEventBus() {
+        return true;
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(UpdateWarnRecord event) {
+        getWarningRecord(1, 300);
+    }
+
 
     private void getWarningRecord(int pageNum, int pageSize) {
         ReqWarnRecord reqDeviceManager = new ReqWarnRecord(pageNum, pageSize);
@@ -201,7 +242,7 @@ public class HomeFragment extends LazyLoadFragment implements AMap.OnMarkerClick
                     public void onNext(RespWarnRecord respWarnRecord) {
                         if (respWarnRecord.getData().getList().size() > 0) {
                             rlMonitorWarn.setVisibility(View.VISIBLE);
-                            rlUnlock.setVisibility(View.VISIBLE);
+
                             List<RespWarnRecord.DataBean.ListBean> listBeans = new ArrayList<>();
                             List<RespWarnRecord.DataBean.ListBean> dealBeans = new ArrayList<>();
 
@@ -212,31 +253,122 @@ public class HomeFragment extends LazyLoadFragment implements AMap.OnMarkerClick
                                     dealBeans.add(respWarnRecord.getData().getList().get(i));
                                 }
                             }
-                            warnRecordAdapter.setData(listBeans);
-                            wrAdapterResult.setData(dealBeans);
 
+                            if (listBeans.size() == 0) {
+                                tvNoWarnData.setVisibility(View.VISIBLE);
+                                warnRecordAdapter.setData(listBeans);
+                            } else {
+                                tvNoWarnData.setVisibility(View.GONE);
+                                warnRecordAdapter.setData(listBeans);
+                            }
 
-                            tvNoPleaseData.setVisibility(View.GONE);
-                            tvNoDealData.setVisibility(View.GONE);
-                            tvNoWarnData.setVisibility(View.GONE);
-                            tvNoWarnData.setVisibility(View.GONE);
-
+                            if (dealBeans.size() == 0) {
+                                tvNoResultData.setVisibility(View.VISIBLE);
+                                wrAdapterResult.setData(dealBeans);
+                            } else {
+                                tvNoResultData.setVisibility(View.GONE);
+                                wrAdapterResult.setData(dealBeans);
+                            }
                         } else {
-                            ivLeftRight.setImageResource(R.drawable.btn_left);
-                            ivTopBottom.setImageResource(R.drawable.btn_top);
-
                             rlMonitorWarn.setVisibility(View.GONE);
-                            rlUnlock.setVisibility(View.GONE);
+                            ivLeftRight.setImageResource(R.drawable.btn_left);
 
-                            tvNoPleaseData.setVisibility(View.VISIBLE);
-                            tvNoDealData.setVisibility(View.VISIBLE);
                             tvNoWarnData.setVisibility(View.VISIBLE);
-                            tvNoWarnData.setVisibility(View.VISIBLE);
+                            tvNoResultData.setVisibility(View.VISIBLE);
                         }
                     }
                 });
     }
 
+    private void getUnlockList(int pageNum, int pageSize) {
+        HttpClient.getInstance().service.getUnlockList(new ReqUnLockList(pageNum, pageSize, DataWarehouse.getUserId(), 3))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new FMSubscriber<RespWarnRecord>() {
+                    @Override
+                    public void onNext(RespWarnRecord respWarnRecord) {
+                        if (0 == respWarnRecord.getCode() && respWarnRecord.getData().getList().size() > 0) {
+                            rlUnlock.setVisibility(View.VISIBLE);
+
+                            List<RespWarnRecord.DataBean.ListBean> listBeans = new ArrayList<>();
+                            List<RespWarnRecord.DataBean.ListBean> dealBeans = new ArrayList<>();
+
+                            for (int i = 0; i < respWarnRecord.getData().getList().size(); i++) {
+                                if ("3".equals(respWarnRecord.getData().getList().get(i).getStatus())) {//status 3未处理 4已处理
+                                    listBeans.add(respWarnRecord.getData().getList().get(i));
+                                } else if ("4".equals(respWarnRecord.getData().getList().get(i).getStatus())) {
+                                    dealBeans.add(respWarnRecord.getData().getList().get(i));
+                                }
+                            }
+
+                            if (listBeans.size() == 0) {
+                                tvNoPleaseData.setVisibility(View.VISIBLE);
+                                unLockAdapter.setData(listBeans);
+                            } else {
+                                tvNoPleaseData.setVisibility(View.GONE);
+                                unLockAdapter.setData(listBeans);
+                            }
+
+                            if (dealBeans.size() == 0) {
+                                tvNoDealData.setVisibility(View.VISIBLE);
+                                unLockResultAdapter.setData(dealBeans);
+                            } else {
+                                tvNoDealData.setVisibility(View.GONE);
+                                unLockResultAdapter.setData(dealBeans);
+                            }
+
+                        } else {
+                            rlUnlock.setVisibility(View.GONE);
+
+                            tvNoPleaseData.setVisibility(View.VISIBLE);
+                            tvNoDealData.setVisibility(View.VISIBLE);
+                            ivTopBottom.setImageResource(R.drawable.btn_top);
+                        }
+                    }
+                });
+    }
+
+    private void getRemoteToken() {
+        DataWarehouse.setAccessToken("Basic Ymxlc3NlZDpibGVzc2Vk");
+        HttpClient.getInstance(HttpClient.BASE_URL_CONTROL).service.getRemoteToken("password", "admin", "admin", "all")
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new FMSubscriber<RespRemoteToken>() {
+                    @Override
+                    public void onNext(RespRemoteToken respRemoteToken) {
+                        DataWarehouse.setAccessToken("Bearer " + respRemoteToken.getAccess_token());
+                        unlockDevice();
+                    }
+                });
+    }
+
+    private void unlockDevice() {
+        StringBuffer stringBuffer = new StringBuffer();
+        ArrayList<String> list = unLockAdapter.getSelectList();
+        for (int i = 0; i < list.size(); i++) {
+            if (i == 0) {
+                stringBuffer.append(Integer.parseInt(list.get(i)));
+            } else {
+                stringBuffer.append("," + Integer.parseInt(list.get(i)));
+            }
+        }
+
+        HttpClient.getInstance(HttpClient.BASE_URL_CONTROL).service.deviceunLock("S44", stringBuffer.toString())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new FMSubscriber<HttpResult>() {
+                    @Override
+                    public void onNext(HttpResult httpResult) {
+                        if ("200".equals(httpResult.getCode())) {
+                            DialogUtil.showDeviceUnLock(getActivity());
+
+                            getUnlockList(1, 300);
+                        } else {
+                            ToastUtils.show(context, "解锁失败");
+                        }
+                    }
+                });
+    }
 
     private void getWarningLocation() {
         HttpClient.getInstance().service.getWarningLocation()
@@ -246,26 +378,8 @@ public class HomeFragment extends LazyLoadFragment implements AMap.OnMarkerClick
                     @Override
                     public void onNext(RespWarnLocation respWarnLocation) {
                         for (int i = 0; i < respWarnLocation.getData().size(); i++) {
-                            addCarMarkerToMap(respWarnLocation.getData().get(i).getLatitude(), respWarnLocation.getData().get(i).getLongitude());
-                        }
-                    }
-                });
-    }
-
-
-    private void getDeviceManager(int pageNum, int pageSize) {
-        ReqDeviceManager reqDeviceManager = new ReqDeviceManager(pageNum, pageSize, "", DataWarehouse.getUserId());
-        HttpClient.getInstance().service.getDeviceManager(reqDeviceManager)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new FMSubscriber<RespDeviceManager>() {
-                    @Override
-                    public void onNext(RespDeviceManager respDeviceManager) {
-                        if (respDeviceManager.getCode() == 0) {
-                            if (respDeviceManager.getData().getList().size() > 0) {
-                                btnDeviceLock.setVisibility(View.GONE);
-                            } else {
-                                btnDeviceLock.setVisibility(View.VISIBLE);
+                            if(respWarnLocation.getData().get(i).getLatitude()>0 && respWarnLocation.getData().get(i).getLongitude()>0) {
+                                addCarMarkerToMap(respWarnLocation.getData().get(i).getLatitude(), respWarnLocation.getData().get(i).getLongitude());
                             }
                         }
                     }
@@ -292,9 +406,20 @@ public class HomeFragment extends LazyLoadFragment implements AMap.OnMarkerClick
         }
     }
 
-    @OnClick({R.id.btn_device_lock, R.id.iv_top_bottom, R.id.iv_left_right})
+    @OnClick({R.id.btn_unlock, R.id.btn_device_lock, R.id.iv_top_bottom, R.id.iv_left_right})
     public void onViewClicked(View v) {
         switch (v.getId()) {
+
+            case R.id.btn_unlock:
+
+                if (unLockAdapter.getSelectList().size() == 0) {
+                    ToastUtils.show(context, "请选择解锁锁设备");
+                } else {
+                    getRemoteToken();
+                }
+
+                break;
+
             case R.id.btn_device_lock:
 
                 startActivity(new Intent(context, ScanAddDeviceActivity.class));
@@ -528,12 +653,6 @@ public class HomeFragment extends LazyLoadFragment implements AMap.OnMarkerClick
         aMap.animateCamera(cameraUpdate, 1000, null);
     }
 
-    public double getDistance(double startLat, double startLon, double endLat, double endLon) {
-        double poiDistance = AMapUtils.calculateLineDistance(new LatLng(startLat, startLon),
-                new LatLng(endLat, endLon));
-        return poiDistance;
-    }
-
     private void initGPS() {
         LocationManager mLocationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         // 判断GPS模块是否开启，如果没有则开启
@@ -560,34 +679,6 @@ public class HomeFragment extends LazyLoadFragment implements AMap.OnMarkerClick
             dialog.show();
         }
     }
-
-
-    //获取开始和结束的地址
-    public void getAddress(double lat, double lon, TextView poiPlaceName) {
-        new Thread() {
-
-            @Override
-            public void run() {
-                super.run();
-
-                LatLonPoint point = new LatLonPoint(lat, lon);
-                RegeocodeQuery query = new RegeocodeQuery(point, 200,
-                        GeocodeSearch.AMAP);// 第一个参数表示一个Latlng，第二参数表示范围多少米，第三个参数表示是火系坐标系还是GPS原生坐标系
-                try {
-                    RegeocodeAddress result = geocoderSearch.getFromLocation(query);// 设置同步逆地理编码请求
-
-                    getActivity().runOnUiThread(() -> {
-                        poiPlaceName.setText(result.getFormatAddress());
-                    });
-
-                } catch (AMapException e) {
-                    e.printStackTrace();
-                }
-            }
-        }.start();
-
-    }
-
 
     /**
      * 方法必须重写

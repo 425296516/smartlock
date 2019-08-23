@@ -13,6 +13,7 @@ import com.anlida.smartlock.R;
 import com.anlida.smartlock.adapter.DeviceManagerAdapter;
 import com.anlida.smartlock.base.FMSubscriber;
 import com.anlida.smartlock.base.LazyLoadFragment;
+import com.anlida.smartlock.event.UpdateDeviceManager;
 import com.anlida.smartlock.model.HttpResult;
 import com.anlida.smartlock.model.req.ReqDeviceManager;
 import com.anlida.smartlock.model.resp.RespDeviceManager;
@@ -21,6 +22,9 @@ import com.anlida.smartlock.network.HttpClient;
 import com.anlida.smartlock.utils.DataWarehouse;
 import com.anlida.smartlock.utils.DialogUtil;
 import com.anlida.smartlock.utils.ToastUtils;
+
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 
@@ -45,6 +49,8 @@ public class DeviceManagerFragment extends LazyLoadFragment {
     LinearLayout linearLayout;
     @BindView(R.id.tv_add_device_person)
     TextView tvAddDevicePerson;
+    @BindView(R.id.tv_no_data)
+    TextView tvNoData;
 
     @Override
     protected String description() {
@@ -58,6 +64,12 @@ public class DeviceManagerFragment extends LazyLoadFragment {
 
     @Override
     public void initData() {
+        etSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                etSearch.setCursorVisible(true);
+            }
+        });
 
         initRecyclerView();
 
@@ -68,21 +80,21 @@ public class DeviceManagerFragment extends LazyLoadFragment {
 
     }
 
-    @OnClick({R.id.tv_search,R.id.btn_device_lock, R.id.tv_add_device_person, R.id.tv_all_select})
+    @OnClick({R.id.tv_search, R.id.btn_device_lock, R.id.tv_add_device_person, R.id.tv_all_select})
     public void onClick(View v) {
         switch (v.getId()) {
 
             case R.id.tv_search:
 
-              getSearchDeviceManager(etSearch.getText().toString());
+                getSearchDeviceManager(etSearch.getText().toString());
 
                 break;
 
             case R.id.btn_device_lock:
 
-                if(deviceManagerAdapter.getSelectList().size()==0){
-                    ToastUtils.show(context,"请选择上锁设备");
-                }else {
+                if (deviceManagerAdapter.getSelectList().size() == 0) {
+                    ToastUtils.show(context, "请选择上锁设备");
+                } else {
                     getRemoteToken();
                 }
 
@@ -124,8 +136,20 @@ public class DeviceManagerFragment extends LazyLoadFragment {
     }
 
     @Override
+    protected boolean needEventBus() {
+        return true;
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(UpdateDeviceManager event) {
+        getDeviceManager(1, 300);
+    }
+
+    @Override
     protected void loadData() {
-        getDeviceManager(1, 10);
+        etSearch.setCursorVisible(false);
+
+        getDeviceManager(1, 300);
     }
 
     private DeviceManagerAdapter deviceManagerAdapter;
@@ -140,44 +164,68 @@ public class DeviceManagerFragment extends LazyLoadFragment {
 
 
     private void getDeviceManager(int pageNum, int pageSize) {
-        ReqDeviceManager reqDeviceManager = new ReqDeviceManager(pageNum, pageSize, "",DataWarehouse.getUserId());
+        ReqDeviceManager reqDeviceManager = new ReqDeviceManager(pageNum, pageSize, "", DataWarehouse.getUserId());
         HttpClient.getInstance().service.getDeviceManager(reqDeviceManager)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new FMSubscriber<RespDeviceManager>() {
                     @Override
                     public void onNext(RespDeviceManager respDeviceManager) {
-                        deviceManagerAdapter.setData(respDeviceManager.getData().getList());
+                        if(respDeviceManager.getData()==null || respDeviceManager.getData().getList().size()==0){
+                            tvNoData.setVisibility(View.VISIBLE);
+                        }else {
+                            tvNoData.setVisibility(View.GONE);
+                            deviceManagerAdapter.setData(respDeviceManager.getData().getList());
+                        }
                     }
                 });
     }
 
 
     private void getSearchDeviceManager(String search) {
-        ReqDeviceManager reqDeviceManager = new ReqDeviceManager(1, 10,search, DataWarehouse.getUserId());
+        ReqDeviceManager reqDeviceManager = new ReqDeviceManager(1, 300, search, DataWarehouse.getUserId());
         HttpClient.getInstance().service.searchDeviceManager(reqDeviceManager)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new FMSubscriber<RespDeviceManager>() {
                     @Override
                     public void onNext(RespDeviceManager respDeviceManager) {
-                        deviceManagerAdapter.setData(respDeviceManager.getData().getList());
+                        if(respDeviceManager.getData()==null || respDeviceManager.getData().getList().size()==0){
+                            tvNoData.setVisibility(View.VISIBLE);
+                        }else {
+                            tvNoData.setVisibility(View.GONE);
+                            deviceManagerAdapter.setData(respDeviceManager.getData().getList());
+                        }
                     }
                 });
 
     }
 
     private void deviceLock(ArrayList<String> list, String command) {
-        HttpClient.getInstance(HttpClient.BASE_URL_CONTROL).service.deviceLock(list, command)
+        StringBuffer stringBuffer = new StringBuffer();
+
+        for (int i =0 ;i <list.size();i++){
+            if(i==0) {
+                stringBuffer.append(Integer.parseInt(list.get(i)));
+            }else {
+                stringBuffer.append(","+Integer.parseInt(list.get(i)));
+            }
+        }
+
+        HttpClient.getInstance(HttpClient.BASE_URL_CONTROL).service.deviceLocks(DataWarehouse.getUserId(),command,stringBuffer.toString())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new FMSubscriber<HttpResult>() {
                     @Override
                     public void onNext(HttpResult httpResult) {
-                        if(deviceManagerAdapter.getItemCount()== deviceManagerAdapter.getSelectList().size()) {
-                            DialogUtil.showDialogLock(getActivity(),true);
+                        if ("200".equals(httpResult.getCode())) {
+                            if (deviceManagerAdapter.getItemCount() == deviceManagerAdapter.getSelectList().size()) {
+                                DialogUtil.showDialogLock(getActivity(), true);
+                            } else {
+                                DialogUtil.showDialogLock(getActivity(), false);
+                            }
                         }else {
-                            DialogUtil.showDialogLock(getActivity(),false);
+                            ToastUtils.show(context,"上锁失败");
                         }
                     }
                 });
@@ -185,16 +233,15 @@ public class DeviceManagerFragment extends LazyLoadFragment {
 
     private void getRemoteToken() {
         DataWarehouse.setAccessToken("Basic Ymxlc3NlZDpibGVzc2Vk");
-        HttpClient.getInstance(HttpClient.BASE_URL_CONTROL).service.getRemoteToken("password","admin","admin","all")
+        HttpClient.getInstance(HttpClient.BASE_URL_CONTROL).service.getRemoteToken("password", "admin", "admin", "all")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new FMSubscriber<RespRemoteToken>() {
                     @Override
                     public void onNext(RespRemoteToken respRemoteToken) {
-                        DataWarehouse.setAccessToken("Bearer "+respRemoteToken.getAccess_token());
+                        DataWarehouse.setAccessToken("Bearer " + respRemoteToken.getAccess_token());
                         deviceLock(deviceManagerAdapter.getSelectList(), "H11");
                     }
                 });
     }
-
 }

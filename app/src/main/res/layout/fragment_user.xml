@@ -11,7 +11,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@android:color/white"
-        android:background="@color/color_668FEC"
+        android:background="@drawable/shape_rec_circle_668fec"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="10dp"
         android:text="退出登录"/>
 
     <LinearLayout
@@ -26,7 +29,7 @@
             android:layout_height="wrap_content"
             android:drawableLeft="@drawable/shape_rec_1654e2"
             android:drawablePadding="10dp"
-            android:text="主联系人信息"
+            android:text="主要安全员"
             android:textColor="@color/color_1654E2"
             android:textSize="16sp" />
 
@@ -56,7 +59,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="工作驻地" />
+                android:text="承建方" />
 
             <TextView
                 android:id="@+id/tv_work_address"
@@ -168,7 +171,7 @@
             android:layout_height="wrap_content"
             android:drawableLeft="@drawable/shape_rec_1654e2"
             android:drawablePadding="10dp"
-            android:text="紧急联系人"
+            android:text="协同安全员"
             android:textColor="@color/color_1654E2"
             android:textSize="16sp" />
 
@@ -198,7 +201,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="工作驻地" />
+                android:text="承建方" />
 
             <TextView
                 android:id="@+id/tv_urgent_work_address"

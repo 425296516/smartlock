@@ -93,6 +93,14 @@ public class LoginActivity extends FMActivity {
                             DataWarehouse.setToken(userInfo.getToken());
                             DataWarehouse.setUserId(userInfo.getUser().getUserId());
 
+                            if (cbRememberPwd.isChecked()) {
+                                DataWarehouse.setAccount(etAccount.getText().toString());
+                                DataWarehouse.setPassword(etPassword.getText().toString());
+                            } else {
+                                DataWarehouse.setAccount(null);
+                                DataWarehouse.setPassword(null);
+                            }
+
                             getMainContactInfo();
                         }
                     }

@@ -9,6 +9,7 @@ import com.anlida.smartlock.model.req.ReqManagerInfo;
 import com.anlida.smartlock.model.req.ReqPersonCenter;
 import com.anlida.smartlock.model.req.ReqRepairInfo;
 import com.anlida.smartlock.model.req.ReqSearchWarning;
+import com.anlida.smartlock.model.req.ReqUnLockList;
 import com.anlida.smartlock.model.req.ReqUpdatePhone;
 import com.anlida.smartlock.model.req.ReqWarnRecord;
 import com.anlida.smartlock.model.req.ReqWorkerInfo;
@@ -73,6 +74,10 @@ public interface RestAPI {
     @POST("/warninglog/page")
     Flowable<RespWarnRecord> getSearchWarningRecord(@Body ReqSearchWarning reqSearchWarning);
 
+    //查看申请解锁的列表
+    @POST("/warninglog/page")
+    Flowable<RespWarnRecord> getUnlockList(@Body ReqUnLockList reqUnLockList);
+
     //处理预警记录接口
     @POST("/warninglog/edit")
     Flowable<RespWarnRecord> dealWarningRecord(@Body ReqDealWarning reqDealWarning);
@@ -91,7 +96,17 @@ public interface RestAPI {
 
     //设备上锁的接口
     @GET("/devices/op/command")
-    Flowable<HttpResult> deviceLock(@Query("imei") ArrayList<String> list, @Query("command") String command);
+    @Headers({"Content-Type:application/json;charset=UTF-8"})
+    Flowable<HttpResult> deviceLock( @Query("userName") String userName, @Query("command") String command,@Query(value = "imei", encoded = true) ArrayList<String> imei);
+
+    //设备上锁的接口
+    @GET("/devices/op/commands")
+    @Headers({"Content-Type:application/json;charset=UTF-8"})
+    Flowable<HttpResult> deviceLocks( @Query("userName") String userName, @Query("command") String command,@Query("imei") String imei);
+
+    //设备解锁的接口
+    @GET("/devices/op/Androidjiesuo")
+    Flowable<HttpResult> deviceunLock(@Query("command") String command,@Query("imei") String imei);
 
     //获取指令下发的token
     @FormUrlEncoded

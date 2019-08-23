@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="250dp"
+    android:layout_height="145dp"
+    android:layout_gravity="center"
+    android:background="@drawable/shape_device_unlock_tip"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_lock_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:drawablePadding="10dp"
+        android:layout_centerInParent="true"
+        android:text="解锁成功"
+        android:drawableTop="@drawable/img_3"
+        android:textColor="@android:color/white"
+        android:textSize="13sp"/>
+
+</RelativeLayout>

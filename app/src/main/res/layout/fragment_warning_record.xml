@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:paddingTop="5dp">
 
     <EditText
         android:id="@+id/et_search"
@@ -12,6 +13,8 @@
         android:background="@drawable/shape_search_bg_left"
         android:drawableLeft="@drawable/ic_search_black_12dp"
         android:drawablePadding="10dp"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
         android:hint="请输入姓名和报警类型"
         android:paddingLeft="10dp"
         android:textSize="12sp" />
@@ -85,6 +88,15 @@
 
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/tv_no_warn_data"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_below="@+id/linearLayout"
+        android:gravity="center"
+        android:text="暂无报警信息"
+        android:visibility="visible"/>
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
@@ -147,6 +159,15 @@
             android:textSize="15sp" />
 
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_no_warn_result_data"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_below="@+id/linear_layout_result"
+        android:gravity="center"
+        android:text="暂无处理信息"
+        android:visibility="visible"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view_result"
