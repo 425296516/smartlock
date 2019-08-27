@@ -15,6 +15,7 @@ import com.anlida.smartlock.model.req.ReqSearchWarning;
 import com.anlida.smartlock.model.req.ReqWarnRecord;
 import com.anlida.smartlock.model.resp.RespWarnRecord;
 import com.anlida.smartlock.network.HttpClient;
+import com.anlida.smartlock.utils.DataWarehouse;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -125,31 +126,33 @@ public class WarningRecordFragment extends LazyLoadFragment {
                 .subscribe(new FMSubscriber<RespWarnRecord>() {
                     @Override
                     public void onNext(RespWarnRecord respWarnRecord) {
-                        List<RespWarnRecord.DataBean.ListBean> listBeans = new ArrayList<>();
-                        List<RespWarnRecord.DataBean.ListBean> dealBeans = new ArrayList<>();
+                        if (0 == respWarnRecord.getCode()) {
+                            List<RespWarnRecord.DataBean.ListBean> listBeans = new ArrayList<>();
+                            List<RespWarnRecord.DataBean.ListBean> dealBeans = new ArrayList<>();
 
-                        for (int i = 0; i < respWarnRecord.getData().getList().size(); i++) {
-                            if ("1".equals(respWarnRecord.getData().getList().get(i).getStatus())) {//status 1未处理 2已处理
-                                listBeans.add(respWarnRecord.getData().getList().get(i));
-                            } else if ("2".equals(respWarnRecord.getData().getList().get(i).getStatus())) {
-                                dealBeans.add(respWarnRecord.getData().getList().get(i));
+                            for (int i = 0; i < respWarnRecord.getData().getList().size(); i++) {
+                                if ("1".equals(respWarnRecord.getData().getList().get(i).getStatus())) {//status 1未处理 2已处理
+                                    listBeans.add(respWarnRecord.getData().getList().get(i));
+                                } else if ("2".equals(respWarnRecord.getData().getList().get(i).getStatus())) {
+                                    dealBeans.add(respWarnRecord.getData().getList().get(i));
+                                }
                             }
-                        }
 
-                        if (listBeans.size() == 0) {
-                            tvNoWarnData.setVisibility(View.VISIBLE);
-                            warnRecordAdapter.setData(listBeans);
-                        } else {
-                            tvNoWarnData.setVisibility(View.GONE);
-                            warnRecordAdapter.setData(listBeans);
-                        }
+                            if (listBeans.size() == 0) {
+                                tvNoWarnData.setVisibility(View.VISIBLE);
+                                warnRecordAdapter.setData(listBeans);
+                            } else {
+                                tvNoWarnData.setVisibility(View.GONE);
+                                warnRecordAdapter.setData(listBeans);
+                            }
 
-                        if (dealBeans.size() == 0) {
-                            tvNoWarnResultData.setVisibility(View.VISIBLE);
-                            wrAdapterResult.setData(dealBeans);
-                        } else {
-                            tvNoWarnResultData.setVisibility(View.GONE);
-                            wrAdapterResult.setData(dealBeans);
+                            if (dealBeans.size() == 0) {
+                                tvNoWarnResultData.setVisibility(View.VISIBLE);
+                                wrAdapterResult.setData(dealBeans);
+                            } else {
+                                tvNoWarnResultData.setVisibility(View.GONE);
+                                wrAdapterResult.setData(dealBeans);
+                            }
                         }
                     }
                 });
@@ -157,18 +160,39 @@ public class WarningRecordFragment extends LazyLoadFragment {
     }
 
     private void getSearchWarningRecord(int pageNum, int pageSize, String search, int status) {
-        ReqSearchWarning reqSearchWarning = new ReqSearchWarning(pageNum, pageSize, search, status);
+        ReqSearchWarning reqSearchWarning = new ReqSearchWarning(pageNum, pageSize, DataWarehouse.getUserId(),search, status);
         HttpClient.getInstance().service.getSearchWarningRecord(reqSearchWarning)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new FMSubscriber<RespWarnRecord>() {
                     @Override
-                    public void onNext(RespWarnRecord respDeviceManager) {
-                        if (0 == respDeviceManager.getCode()) {
-                            if (status == 1) {
-                                warnRecordAdapter.setData(respDeviceManager.getData().getList());
+                    public void onNext(RespWarnRecord respWarnRecord) {
+                        if (0 == respWarnRecord.getCode()) {
+                            List<RespWarnRecord.DataBean.ListBean> listBeans = new ArrayList<>();
+                            List<RespWarnRecord.DataBean.ListBean> dealBeans = new ArrayList<>();
+
+                            for (int i = 0; i < respWarnRecord.getData().getList().size(); i++) {
+                                if ("1".equals(respWarnRecord.getData().getList().get(i).getStatus())) {//status 1未处理 2已处理
+                                    listBeans.add(respWarnRecord.getData().getList().get(i));
+                                } else if ("2".equals(respWarnRecord.getData().getList().get(i).getStatus())) {
+                                    dealBeans.add(respWarnRecord.getData().getList().get(i));
+                                }
+                            }
+
+                            if (listBeans.size() == 0) {
+                                tvNoWarnData.setVisibility(View.VISIBLE);
+                                warnRecordAdapter.setData(listBeans);
                             } else {
-                                wrAdapterResult.setData(respDeviceManager.getData().getList());
+                                tvNoWarnData.setVisibility(View.GONE);
+                                warnRecordAdapter.setData(listBeans);
+                            }
+
+                            if (dealBeans.size() == 0) {
+                                tvNoWarnResultData.setVisibility(View.VISIBLE);
+                                wrAdapterResult.setData(dealBeans);
+                            } else {
+                                tvNoWarnResultData.setVisibility(View.GONE);
+                                wrAdapterResult.setData(dealBeans);
                             }
                         }
                     }

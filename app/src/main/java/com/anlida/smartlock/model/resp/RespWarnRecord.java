@@ -252,6 +252,8 @@ public class RespWarnRecord {
             private String updateBy;
             private String createDate;
             private String updateDate;
+            private String createTime;
+            private String updateTime;
             private String remarks;
             private String delFlag;
             private String sort;
@@ -305,6 +307,22 @@ public class RespWarnRecord {
 
             public void setUpdateDate(String updateDate) {
                 this.updateDate = updateDate;
+            }
+
+            public String getCreateTime() {
+                return createTime;
+            }
+
+            public void setCreateTime(String createTime) {
+                this.createTime = createTime;
+            }
+
+            public String getUpdateTime() {
+                return updateTime;
+            }
+
+            public void setUpdateTime(String updateTime) {
+                this.updateTime = updateTime;
             }
 
             public String getRemarks() {

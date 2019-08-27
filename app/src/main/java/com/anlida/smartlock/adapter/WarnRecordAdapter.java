@@ -3,7 +3,6 @@ package com.anlida.smartlock.adapter;
 import android.app.Activity;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,9 +12,12 @@ import android.widget.TextView;
 import com.anlida.smartlock.R;
 import com.anlida.smartlock.base.FMSubscriber;
 import com.anlida.smartlock.event.UpdateWarnRecord;
+import com.anlida.smartlock.model.HttpResult;
 import com.anlida.smartlock.model.req.ReqDealWarning;
+import com.anlida.smartlock.model.resp.RespRemoteToken;
 import com.anlida.smartlock.model.resp.RespWarnRecord;
 import com.anlida.smartlock.network.HttpClient;
+import com.anlida.smartlock.utils.DataWarehouse;
 import com.anlida.smartlock.utils.DialogUtil;
 import com.anlida.smartlock.utils.ToastUtils;
 
@@ -64,15 +66,11 @@ public class WarnRecordAdapter extends RecyclerView.Adapter<WarnRecordAdapter.Wa
         holder.tvWarn.setText(listBeans.get(position).getWarningType());
         holder.tvName.setText(listBeans.get(position).getUname());
         if("1".equals(listBeans.get(position).getStatus())){
-            String time = listBeans.get(position).getCreateDate();
-            if(!TextUtils.isEmpty(time) && time.length()>5) {
-                holder.tvTime.setText(time.substring(time.length() - 5, time.length()));
-            }
+            String time = listBeans.get(position).getCreateTime();
+            holder.tvTime.setText("" + time);
         }else {
-            String time = listBeans.get(position).getUpdateDate();
-            if(!TextUtils.isEmpty(time) && time.length()>5) {
-                holder.tvTime.setText(time.substring(time.length() - 5, time.length()));
-            }
+            String time = listBeans.get(position).getUpdateTime();
+            holder.tvTime.setText("" + time);
         }
 
         if (mType == 1) {
@@ -81,13 +79,17 @@ public class WarnRecordAdapter extends RecyclerView.Adapter<WarnRecordAdapter.Wa
             holder.rlDeal.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    DialogUtil.showDialogunLock(mActivity, listBeans.get(position).getUname(),listBeans.get(position).getPhone(),new View.OnClickListener() {
+                    RespWarnRecord.DataBean.ListBean listBean = listBeans.get(position);
+                    dealWarningRecord(listBean.getId()+"",DataWarehouse.getUserId(),"2");
+
+                    DialogUtil.showDialogunLock(mActivity, listBean.getUname(),listBean.getPhone(),new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
+
                             DialogUtil.showDialogunLockConfirm(mActivity, new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    dealWarningRecord(listBeans.get(position).getId()+"","2");
+                                    getRemoteToken(listBean.getImei());
                                 }
                             });
                         }
@@ -102,8 +104,41 @@ public class WarnRecordAdapter extends RecyclerView.Adapter<WarnRecordAdapter.Wa
 
     }
 
-    private void dealWarningRecord(String id, String status) {
-        ReqDealWarning reqDealWarning = new ReqDealWarning(id, status);
+    private void getRemoteToken(String imei) {
+        DataWarehouse.setAccessToken("Basic Ymxlc3NlZDpibGVzc2Vk");
+        HttpClient.getInstance(HttpClient.BASE_URL_CONTROL).service.getRemoteToken("password", "admin", "admin", "all")
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new FMSubscriber<RespRemoteToken>() {
+                    @Override
+                    public void onNext(RespRemoteToken respRemoteToken) {
+                        DataWarehouse.setAccessToken("Bearer " + respRemoteToken.getAccess_token());
+
+                        unlockDevice(imei);
+                    }
+                });
+    }
+
+    private void unlockDevice(String imei) {
+            HttpClient.getInstance(HttpClient.BASE_URL_CONTROL).service.deviceunLock("S44", imei)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new FMSubscriber<HttpResult>() {
+                        @Override
+                        public void onNext(HttpResult httpResult) {
+                            if ("200".equals(httpResult.getCode())) {
+                                //DialogUtil.showDeviceUnLock(getActivity());
+                                ToastUtils.show(mActivity, "解锁操作执行成功");
+
+                            } else {
+                                ToastUtils.show(mActivity, "解锁失败");
+                            }
+                        }
+                    });
+    }
+
+    private void dealWarningRecord(String id, String userId,String status) {
+        ReqDealWarning reqDealWarning = new ReqDealWarning(id, userId,status);
         HttpClient.getInstance().service.dealWarningRecord(reqDealWarning)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

@@ -23,6 +23,7 @@ import com.anlida.smartlock.utils.DataWarehouse;
 import com.anlida.smartlock.utils.ToastUtils;
 import com.anlida.smartlock.widget.BloodTypePopupWindow;
 import com.anlida.smartlock.zxing.QRCodeScanActivity;
+import com.blankj.utilcode.util.RegexUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -37,6 +38,10 @@ public class ScanAddDeviceActivity extends FMActivity {
 
     @BindView(R.id.iv_scan_code)
     ImageView ivScanCode;
+    @BindView(R.id.tv_scan_title)
+    TextView tvScanTitle;
+    @BindView(R.id.et_imei)
+    TextView etImei;
     @BindView(R.id.et_input_name)
     EditText etInputName;
     @BindView(R.id.et_input_wordid)
@@ -62,28 +67,37 @@ public class ScanAddDeviceActivity extends FMActivity {
         return R.layout.activity_scan_add_device;
     }
 
-    @OnClick({R.id.iv_scan_code, R.id.tv_submit, R.id.cb_man, R.id.cb_woman,R.id.tv_input_bloodtype})
+    @OnClick({R.id.iv_scan_code, R.id.tv_submit, R.id.cb_man, R.id.cb_woman, R.id.tv_input_bloodtype})
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.iv_scan_code:
 
                 Intent intent = new Intent(context, QRCodeScanActivity.class);
-                intent.putExtra("PAGE_TYPE","ScanAddDeviceActivity");
+                intent.putExtra("PAGE_TYPE", "ScanAddDeviceActivity");
                 startActivity(intent);
 
                 break;
 
             case R.id.tv_submit:
-                if(!TextUtils.isEmpty(mImei) && !TextUtils.isEmpty(etInputName.getText().toString())&&!TextUtils.isEmpty(etInputWordid.getText().toString())
+                if (!TextUtils.isEmpty(mImei) && !TextUtils.isEmpty(etInputName.getText().toString()) && !TextUtils.isEmpty(etInputWordid.getText().toString())
                         && !TextUtils.isEmpty(etInputIdcard.getText().toString()) && !TextUtils.isEmpty(etInputPhone.getText().toString())
-                        &&!TextUtils.isEmpty(etInputAge.getText().toString()) && !TextUtils.isEmpty(tvInputBloodtype.getText().toString())){
+                        && !TextUtils.isEmpty(etInputAge.getText().toString()) && !TextUtils.isEmpty(tvInputBloodtype.getText().toString())) {
 
-                        addDeviceAndUser(DataWarehouse.getUserId(), mImei, etInputName.getText().toString(),
-                            etInputWordid.getText().toString(), etInputIdcard.getText().toString(), etInputPhone.getText().toString(),
-                            etInputAge.getText().toString(), tvInputBloodtype.getText().toString(), cbMan.isChecked() ?"1" : "2");
-                }else {
-                    ToastUtils.show(context,"请填写所有数据");
+                    if (RegexUtils.isMobileExact(etInputPhone.getText().toString())) {
+                        if (RegexUtils.isIDCard18(etInputIdcard.getText().toString())) {
+                            addDeviceAndUser(DataWarehouse.getUserId(), mImei, etInputName.getText().toString(),
+                                    etInputWordid.getText().toString(), etInputIdcard.getText().toString(), etInputPhone.getText().toString(),
+                                    etInputAge.getText().toString(), tvInputBloodtype.getText().toString(), cbMan.isChecked() ? "1" : "2");
+                        } else {
+                            ToastUtils.show(context, "请输入正确的身份证号码");
+                        }
+                    } else {
+                        ToastUtils.show(context, "请输入正确的手机号");
+                    }
+                } else {
+                    ToastUtils.show(context, "请填写所有数据");
                 }
+
                 break;
 
 
@@ -115,18 +129,27 @@ public class ScanAddDeviceActivity extends FMActivity {
                     }
                 });
 
-                bloodTypePopupWindow.showAtLocation(tvInputBloodtype, Gravity.CENTER,400,-40);
+                bloodTypePopupWindow.showAtLocation(tvInputBloodtype, Gravity.CENTER, 400, -40);
 
                 break;
         }
     }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+
+        tvScanTitle.setText("添加设备信息");
+        etImei.setVisibility(View.VISIBLE);
+        ivScanCode.setVisibility(View.GONE);
+
+    }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void bindDeviceLock(QREvent event) {
         String result = event.getResult();
-        mImei = result.replace("imei:","");
-        ToastUtils.show(context,"扫描成功");
+        mImei = result.replace("imei:", "");
+        ToastUtils.show(context, "扫描成功");
     }
 
     @Override
@@ -144,8 +167,8 @@ public class ScanAddDeviceActivity extends FMActivity {
 
     }
 
-    public void addDeviceAndUser(String createBy, String imei, String name, String workId, String idCard, String phone, String age, String bloodType,String sex) {
-        HttpClient.getInstance().service.addDeviceAndUser(new ReqDeviceUse(createBy, imei, name, workId, idCard, phone, age, bloodType,sex))
+    public void addDeviceAndUser(String createBy, String imei, String name, String workId, String idCard, String phone, String age, String bloodType, String sex) {
+        HttpClient.getInstance().service.addDeviceAndUser(new ReqDeviceUse(createBy, imei, name, workId, idCard, phone, age, bloodType, sex))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new FMSubscriber<HttpResult>() {

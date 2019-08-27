@@ -27,9 +27,10 @@
     <TextView
         android:id="@+id/tv_input"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
+        android:gravity="center_vertical"
         android:layout_marginBottom="200dp"
         android:autoLink="all"
         android:text="扫描异常？点击此处手动输入"

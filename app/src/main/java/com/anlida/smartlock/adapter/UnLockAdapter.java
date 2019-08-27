@@ -3,7 +3,6 @@ package com.anlida.smartlock.adapter;
 import android.app.Activity;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,17 +51,17 @@ public class UnLockAdapter extends RecyclerView.Adapter<UnLockAdapter.UnLockView
         this.onClickListener = onClickListener;
     }
 
-    public ArrayList<String> getSelectList(){
+    public ArrayList<RespWarnRecord.DataBean.ListBean> getSelectList(){
         ArrayList arrayList = new ArrayList();
         if(!hashSet.isEmpty()){
-            for(String s: hashSet) {
+            for(RespWarnRecord.DataBean.ListBean s: hashSet) {
                 arrayList.add(s);
             }
         }
         return arrayList;
     }
 
-    private HashSet<String> hashSet = new HashSet<>();
+    private HashSet<RespWarnRecord.DataBean.ListBean> hashSet = new HashSet<>();
 
     @NonNull
     @Override
@@ -84,25 +83,23 @@ public class UnLockAdapter extends RecyclerView.Adapter<UnLockAdapter.UnLockView
     public void onBindViewHolder(@NonNull UnLockViewHolder holder, int position) {
         holder.tvName.setText(listBeans.get(position).getUname());
         if ("1".equals(listBeans.get(position).getStatus())) {
-            String time = listBeans.get(position).getCreateDate();
-            if(!TextUtils.isEmpty(time) && time.length()>5) {
-                holder.tvTime.setText(time.substring(time.length() - 5, time.length()));
-            }
+            String time = listBeans.get(position).getCreateTime();
+            holder.tvTime.setText(""+time);
         } else {
-            String time = listBeans.get(position).getUpdateDate();
-            if(!TextUtils.isEmpty(time) && time.length()>5) {
-                holder.tvTime.setText(time.substring(time.length() - 5, time.length()));
-            }
+            String time = listBeans.get(position).getUpdateTime();
+            holder.tvTime.setText(""+time);
         }
+
+        holder.tvType.setText(listBeans.get(position).getWarningType());
 
         if (mAllSelect) {
             for (int i=0;i<listBeans.size();i++){
-                hashSet.add(listBeans.get(i).getImei());
+                hashSet.add(listBeans.get(i));
             }
             holder.ivSelect.setImageResource(R.drawable.btn_blue_pre);
         } else {
             for (int i=0;i<listBeans.size();i++){
-                hashSet.remove(listBeans.get(i).getImei());
+                hashSet.remove(listBeans.get(i));
             }
             holder.ivSelect.setImageResource(R.drawable.btn_blue);
         }
@@ -118,9 +115,9 @@ public class UnLockAdapter extends RecyclerView.Adapter<UnLockAdapter.UnLockView
                     holder.ivSelect.setSelected(!holder.ivSelect.isSelected());
                     if (holder.ivSelect.isSelected()) {
                         holder.ivSelect.setImageResource(R.drawable.btn_blue_pre);
-                        hashSet.add(listBeans.get(position).getImei());
+                        hashSet.add(listBeans.get(position));
                     } else {
-                        hashSet.remove(listBeans.get(position).getImei());
+                        hashSet.remove(listBeans.get(position));
                         holder.ivSelect.setImageResource(R.drawable.btn_blue);
                     }
                 }
@@ -149,6 +146,8 @@ public class UnLockAdapter extends RecyclerView.Adapter<UnLockAdapter.UnLockView
         TextView tvName;
         @BindView(R.id.tv_time)
         TextView tvTime;
+        @BindView(R.id.tv_type)
+        TextView tvType;
         @BindView(R.id.tv_deal_result)
         TextView tvDealResult;
         @BindView(R.id.iv_select)

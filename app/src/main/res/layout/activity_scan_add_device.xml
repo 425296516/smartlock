@@ -18,6 +18,7 @@
         android:orientation="vertical">
 
         <TextView
+            android:id="@+id/tv_scan_title"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:drawableLeft="@drawable/shape_rec_1654e2"
@@ -26,6 +27,20 @@
             android:text="使用扫一扫添加设备"
             android:textColor="@color/color_1654E2"
             android:textSize="16sp" />
+
+        <EditText
+            android:id="@+id/et_imei"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/shape_et_bg_e2ecff"
+            android:drawableRight="@drawable/ic_star_black_6dp"
+            android:hint="请输入IMEI号"
+            android:padding="10dp"
+            android:textColor="@color/color_8C8686"
+            android:visibility="gone"
+            android:textSize="14sp" />
 
         <ImageView
             android:id="@+id/iv_scan_code"
@@ -116,6 +131,7 @@
             android:drawableRight="@drawable/ic_star_black_6dp"
             android:hint="请输入电话"
             android:maxLength="11"
+            android:inputType="phone"
             android:padding="10dp"
             android:textColor="@color/color_8C8686"
             android:textSize="14sp" />

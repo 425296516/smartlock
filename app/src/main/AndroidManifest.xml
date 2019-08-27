@@ -24,9 +24,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".ui.ScanAddDeviceActivity"
-            android:screenOrientation="landscape" />
-        <activity
-            android:name=".ui.AddDeviceActivity"
+            android:launchMode="singleTask"
             android:screenOrientation="landscape" />
         <activity
             android:name=".ui.AuthenticActivity"

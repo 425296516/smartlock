@@ -14,14 +14,11 @@ import com.anlida.smartlock.model.req.ReqUpdatePhone;
 import com.anlida.smartlock.model.req.ReqWarnRecord;
 import com.anlida.smartlock.model.req.ReqWorkerInfo;
 import com.anlida.smartlock.model.resp.RespDeviceManager;
-import com.anlida.smartlock.model.resp.RespPeopleManager;
 import com.anlida.smartlock.model.resp.RespPersonCenter;
 import com.anlida.smartlock.model.resp.RespRemoteToken;
 import com.anlida.smartlock.model.resp.RespWarnLocation;
 import com.anlida.smartlock.model.resp.RespWarnRecord;
 import com.anlida.smartlock.model.resp.UserInfo;
-
-import java.util.ArrayList;
 
 import io.reactivex.Flowable;
 import okhttp3.MultipartBody;
@@ -82,10 +79,6 @@ public interface RestAPI {
     @POST("/warninglog/edit")
     Flowable<RespWarnRecord> dealWarningRecord(@Body ReqDealWarning reqDealWarning);
 
-    //获取人员管理的接口
-    @GET("/sys/user/Welist")
-    Flowable<RespPeopleManager> getPeopleManager(@Query("page") int pageNum, @Query("limit") int pageSize);
-
     //获取设备管理的接口
     @POST("/userandlock/page")
     Flowable<RespDeviceManager> getDeviceManager(@Body ReqDeviceManager reqDeviceManager);
@@ -93,11 +86,6 @@ public interface RestAPI {
     //搜索设备的接口
     @POST("/userandlock/pages")
     Flowable<RespDeviceManager> searchDeviceManager(@Body ReqDeviceManager reqDeviceManager);
-
-    //设备上锁的接口
-    @GET("/devices/op/command")
-    @Headers({"Content-Type:application/json;charset=UTF-8"})
-    Flowable<HttpResult> deviceLock( @Query("userName") String userName, @Query("command") String command,@Query(value = "imei", encoded = true) ArrayList<String> imei);
 
     //设备上锁的接口
     @GET("/devices/op/commands")
@@ -126,10 +114,6 @@ public interface RestAPI {
     @POST("/responsibleperson/list")
     Flowable<RespPersonCenter> getUrgentContactInfo(@Body ReqPersonCenter reqPersonCenter);
 
-    //修改手机号
-    @POST("/sys/user/updatebyid")
-    Flowable<HttpResult> updateUserPhone(@Body ReqRepairInfo reqRepairInfo);
-
     //获取验证码
     @GET("/sms/getVerifiCode")
     Flowable<HttpResult> getVerifiCode(@Query("mobile") String mobile);
@@ -142,9 +126,10 @@ public interface RestAPI {
     @POST("/sms/updatePhone")
     Flowable<HttpResult> updatePhone(@Body ReqUpdatePhone reqUpdatePhone);
 
-    //修改协同负责人手机号
+
+    //修改协同人人手机号
     @POST("/sms/updateXietongPhone")
-    Flowable<HttpResult> updateLiablePhone(@Body ReqUpdatePhone reqUpdatePhone);
+    Flowable<HttpResult> updateXietongPhone(@Body ReqUpdatePhone reqUpdatePhone);
 
     //设备领用
     @POST("/userandlock/add")

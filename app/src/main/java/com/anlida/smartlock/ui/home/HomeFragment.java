@@ -50,7 +50,6 @@ import com.anlida.smartlock.model.resp.RespWarnRecord;
 import com.anlida.smartlock.network.HttpClient;
 import com.anlida.smartlock.ui.ScanAddDeviceActivity;
 import com.anlida.smartlock.utils.DataWarehouse;
-import com.anlida.smartlock.utils.DialogUtil;
 import com.anlida.smartlock.utils.ToastUtils;
 
 import org.greenrobot.eventbus.Subscribe;
@@ -158,7 +157,8 @@ public class HomeFragment extends LazyLoadFragment implements AMap.OnMarkerClick
         getWarningRecord(1, 300);
         getWarningLocation();
 
-        getUnlockList(1, 300);
+        getUnDeal(1, 300);
+        getHaveDeal(1, 300);
     }
 
     @Override
@@ -280,8 +280,8 @@ public class HomeFragment extends LazyLoadFragment implements AMap.OnMarkerClick
                 });
     }
 
-    private void getUnlockList(int pageNum, int pageSize) {
-        HttpClient.getInstance().service.getUnlockList(new ReqUnLockList(pageNum, pageSize, DataWarehouse.getUserId(), 3))
+    private void getUnDeal(int pageNum, int pageSize) {
+        HttpClient.getInstance().service.getUnlockList(new ReqUnLockList(pageNum, pageSize, DataWarehouse.getUserId(), 3))//status 3未处理 4已处理
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new FMSubscriber<RespWarnRecord>() {
@@ -290,16 +290,8 @@ public class HomeFragment extends LazyLoadFragment implements AMap.OnMarkerClick
                         if (0 == respWarnRecord.getCode() && respWarnRecord.getData().getList().size() > 0) {
                             rlUnlock.setVisibility(View.VISIBLE);
 
-                            List<RespWarnRecord.DataBean.ListBean> listBeans = new ArrayList<>();
-                            List<RespWarnRecord.DataBean.ListBean> dealBeans = new ArrayList<>();
-
-                            for (int i = 0; i < respWarnRecord.getData().getList().size(); i++) {
-                                if ("3".equals(respWarnRecord.getData().getList().get(i).getStatus())) {//status 3未处理 4已处理
-                                    listBeans.add(respWarnRecord.getData().getList().get(i));
-                                } else if ("4".equals(respWarnRecord.getData().getList().get(i).getStatus())) {
-                                    dealBeans.add(respWarnRecord.getData().getList().get(i));
-                                }
-                            }
+                          List<RespWarnRecord.DataBean.ListBean> listBeans = new ArrayList<>();
+                            listBeans = respWarnRecord.getData().getList();
 
                             if (listBeans.size() == 0) {
                                 tvNoPleaseData.setVisibility(View.VISIBLE);
@@ -308,6 +300,31 @@ public class HomeFragment extends LazyLoadFragment implements AMap.OnMarkerClick
                                 tvNoPleaseData.setVisibility(View.GONE);
                                 unLockAdapter.setData(listBeans);
                             }
+
+                        } else {
+                            rlUnlock.setVisibility(View.GONE);
+
+                            tvNoPleaseData.setVisibility(View.VISIBLE);
+                            tvNoDealData.setVisibility(View.VISIBLE);
+                            ivTopBottom.setImageResource(R.drawable.btn_top);
+                        }
+                    }
+                });
+    }
+
+
+    private void getHaveDeal(int pageNum, int pageSize) {
+        HttpClient.getInstance().service.getUnlockList(new ReqUnLockList(pageNum, pageSize, DataWarehouse.getUserId(), 4))//status 3未处理 4已处理
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new FMSubscriber<RespWarnRecord>() {
+                    @Override
+                    public void onNext(RespWarnRecord respWarnRecord) {
+                        if (0 == respWarnRecord.getCode() && respWarnRecord.getData().getList().size() > 0) {
+                            rlUnlock.setVisibility(View.VISIBLE);
+
+                            List<RespWarnRecord.DataBean.ListBean> dealBeans = new ArrayList<>();
+                            dealBeans = respWarnRecord.getData().getList();
 
                             if (dealBeans.size() == 0) {
                                 tvNoDealData.setVisibility(View.VISIBLE);
@@ -328,6 +345,7 @@ public class HomeFragment extends LazyLoadFragment implements AMap.OnMarkerClick
                 });
     }
 
+
     private void getRemoteToken() {
         DataWarehouse.setAccessToken("Basic Ymxlc3NlZDpibGVzc2Vk");
         HttpClient.getInstance(HttpClient.BASE_URL_CONTROL).service.getRemoteToken("password", "admin", "admin", "all")
@@ -337,37 +355,68 @@ public class HomeFragment extends LazyLoadFragment implements AMap.OnMarkerClick
                     @Override
                     public void onNext(RespRemoteToken respRemoteToken) {
                         DataWarehouse.setAccessToken("Bearer " + respRemoteToken.getAccess_token());
+                        deviceLock();
                         unlockDevice();
                     }
                 });
     }
 
-    private void unlockDevice() {
+    private void deviceLock() {
         StringBuffer stringBuffer = new StringBuffer();
-        ArrayList<String> list = unLockAdapter.getSelectList();
-        for (int i = 0; i < list.size(); i++) {
-            if (i == 0) {
-                stringBuffer.append(Integer.parseInt(list.get(i)));
-            } else {
-                stringBuffer.append("," + Integer.parseInt(list.get(i)));
+        ArrayList<RespWarnRecord.DataBean.ListBean> list = unLockAdapter.getSelectList();
+
+        for (int i =0 ;i <list.size();i++){
+            if(list.get(i).getWarningType().equals("请求上锁")) {
+                stringBuffer.append("," + list.get(i).getImei());
             }
         }
 
-        HttpClient.getInstance(HttpClient.BASE_URL_CONTROL).service.deviceunLock("S44", stringBuffer.toString())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new FMSubscriber<HttpResult>() {
-                    @Override
-                    public void onNext(HttpResult httpResult) {
-                        if ("200".equals(httpResult.getCode())) {
-                            DialogUtil.showDeviceUnLock(getActivity());
-
-                            getUnlockList(1, 300);
-                        } else {
-                            ToastUtils.show(context, "解锁失败");
+        if(stringBuffer.length()>0) {
+            HttpClient.getInstance(HttpClient.BASE_URL_CONTROL).service.deviceLocks(DataWarehouse.getUserId(), "H11", stringBuffer.toString().substring(1, stringBuffer.length()))
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new FMSubscriber<HttpResult>() {
+                        @Override
+                        public void onNext(HttpResult httpResult) {
+                            if ("200".equals(httpResult.getCode())) {
+                                ToastUtils.show(context, "操作执行成功");
+                            } else {
+                                ToastUtils.show(context, "上锁失败");
+                            }
                         }
-                    }
-                });
+                    });
+        }
+    }
+
+
+    private void unlockDevice() {
+        StringBuffer stringBuffer = new StringBuffer();
+        ArrayList<RespWarnRecord.DataBean.ListBean> list = unLockAdapter.getSelectList();
+
+        for (int i = 0; i < list.size(); i++) {
+            if(list.get(i).getWarningType().equals("请求解锁")) {
+                stringBuffer.append("," + list.get(i).getImei());
+            }
+        }
+        if(stringBuffer.length()>0) {
+            HttpClient.getInstance(HttpClient.BASE_URL_CONTROL).service.deviceunLock("S44", stringBuffer.toString().substring(1, stringBuffer.length()))
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new FMSubscriber<HttpResult>() {
+                        @Override
+                        public void onNext(HttpResult httpResult) {
+                            if ("200".equals(httpResult.getCode())) {
+                                //DialogUtil.showDeviceUnLock(getActivity());
+                                ToastUtils.show(context, "操作执行成功");
+
+                                getUnDeal(1, 300);
+                                getHaveDeal(1, 300);
+                            } else {
+                                ToastUtils.show(context, "解锁失败");
+                            }
+                        }
+                    });
+        }
     }
 
     private void getWarningLocation() {

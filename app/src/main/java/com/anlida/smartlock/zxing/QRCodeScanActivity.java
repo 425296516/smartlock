@@ -28,7 +28,7 @@ import android.widget.Toast;
 import com.anlida.component.utils.ActivityCollector;
 import com.anlida.smartlock.R;
 import com.anlida.smartlock.event.QREvent;
-import com.anlida.smartlock.ui.AddDeviceActivity;
+import com.anlida.smartlock.ui.ScanAddDeviceActivity;
 import com.anlida.smartlock.utils.ToastUtils;
 import com.anlida.smartlock.zxing.camera.BeepManager;
 import com.anlida.smartlock.zxing.camera.CameraManager;
@@ -117,7 +117,7 @@ public class QRCodeScanActivity extends AppCompatActivity implements SurfaceHold
             @Override
             public void onClick(View v) {
                 if("ScanAddDeviceActivity".equals(pageType)) {
-                    startActivity(new Intent(QRCodeScanActivity.this, AddDeviceActivity.class));
+                    startActivity(new Intent(QRCodeScanActivity.this, ScanAddDeviceActivity.class));
                 }else if ("RepairFragment".equals(pageType)){
                     QREvent event = new QREvent();
                     event.setPageType("RepairFragment");

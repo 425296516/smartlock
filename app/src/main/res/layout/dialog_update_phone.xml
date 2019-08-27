@@ -26,6 +26,8 @@
         android:background="@drawable/shape_et_bg_e2ecff"
         android:drawableRight="@drawable/ic_star_black_6dp"
         android:hint="请输入新的电话号码"
+        android:maxLength="11"
+        android:inputType="phone"
         android:padding="5dp"
         android:textColor="@color/color_8C8686"
         android:textSize="14sp" />
@@ -46,6 +48,8 @@
             android:background="@drawable/shape_et_bg_e2ecff"
             android:drawableRight="@drawable/ic_star_black_6dp"
             android:hint="请输入手机验证码"
+            android:maxLength="6"
+            android:inputType="phone"
             android:padding="5dp"
             android:textColor="@color/color_8C8686"
             android:textSize="12sp" />

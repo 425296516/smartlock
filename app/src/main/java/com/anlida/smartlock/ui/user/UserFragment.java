@@ -22,6 +22,7 @@ import com.anlida.smartlock.network.HttpClient;
 import com.anlida.smartlock.utils.CountDownUtils;
 import com.anlida.smartlock.utils.DataWarehouse;
 import com.anlida.smartlock.utils.ToastUtils;
+import com.blankj.utilcode.util.RegexUtils;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -174,16 +175,20 @@ public class UserFragment extends LazyLoadFragment {
         tvGetCode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                HttpClient.getInstance().service.getVerifiCode(etInputPhone.getText().toString())
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new FMSubscriber<HttpResult>() {
-                            @Override
-                            public void onNext(HttpResult httpResult) {
-                                // 获取验证码成功之后开启倒计时
-                                CountDownUtils.startCountDown(context, tvGetCode);
-                            }
-                        });
+                if(RegexUtils.isMobileExact(etInputPhone.getText().toString())) {
+                    HttpClient.getInstance().service.getVerifiCode(etInputPhone.getText().toString())
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(new FMSubscriber<HttpResult>() {
+                                @Override
+                                public void onNext(HttpResult httpResult) {
+                                    // 获取验证码成功之后开启倒计时
+                                    CountDownUtils.startCountDown(context, tvGetCode);
+                                }
+                            });
+                }else {
+                    ToastUtils.show(context,"请输入正确的手机号");
+                }
             }
         });
 
@@ -224,7 +229,7 @@ public class UserFragment extends LazyLoadFragment {
                 .subscribe(new FMSubscriber<HttpResult>() {
                     @Override
                     public void onNext(HttpResult httpResult) {
-                        if ("0".equals(httpResult.getCode())) {
+                        if ("200".equals(httpResult.getCode())) {
                             ToastUtils.show(context, "修改成功");
                             tvPhone.setText(mobile);
                         } else {
@@ -236,13 +241,13 @@ public class UserFragment extends LazyLoadFragment {
 
     public void updateLiablePhone(String mobile, String code) {
         ReqUpdatePhone reqUpdatePhone = new ReqUpdatePhone(liableId, mobile, code);
-        HttpClient.getInstance().service.updatePhone(reqUpdatePhone)
+        HttpClient.getInstance().service.updateXietongPhone(reqUpdatePhone)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new FMSubscriber<HttpResult>() {
                     @Override
                     public void onNext(HttpResult httpResult) {
-                        if ("0".equals(httpResult.getCode())) {
+                        if ("200".equals(httpResult.getCode())) {
                             ToastUtils.show(context, "修改成功");
                             tvUrgentPhone.setText(mobile);
                         } else {

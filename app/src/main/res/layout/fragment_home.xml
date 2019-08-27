@@ -30,7 +30,7 @@
 
     <RelativeLayout
         android:id="@+id/rl_please_unlock"
-        android:layout_width="180dp"
+        android:layout_width="240dp"
         android:layout_height="340dp"
         android:layout_marginTop="5dp">
 
@@ -45,18 +45,10 @@
 
         <RelativeLayout
             android:id="@+id/rl_unlock"
-            android:layout_width="180dp"
+            android:layout_width="240dp"
             android:layout_height="320dp"
             android:background="@drawable/shape_dialog_home_bg"
             android:visibility="visible">
-
-            <TextView
-                android:id="@+id/tv_no_please_data"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:textSize="12sp"
-                android:text="暂无请求"/>
 
             <com.anlida.smartlock.widget.DrawableCenterTextView
                 android:layout_width="match_parent"
@@ -76,7 +68,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="40dp"
-                android:background="@color/color_8A8A8A"
+                android:background="@color/color_668FEC"
                 android:orientation="horizontal"
                 android:padding="5dp">
 
@@ -97,14 +89,22 @@
                     android:textSize="12sp" />
 
                 <TextView
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="请求类型"
+                    android:textColor="@android:color/white"
+                    android:textSize="12sp" />
+
+                <TextView
                     android:id="@+id/tv_all_select"
                     android:layout_width="40dp"
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"
-                    android:text="全选"
-                    android:background="@drawable/shape_rec_circle_668fec"
+                    android:text="选择"
+
                     android:textColor="@android:color/white"
                     android:textSize="12sp" />
 
@@ -120,15 +120,25 @@
                 android:scrollbars="none"
                 android:visibility="visible" />
 
+            <TextView
+                android:id="@+id/tv_no_please_data"
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:layout_centerInParent="true"
+                android:gravity="center"
+                android:layout_below="@+id/linearLayout_unlock"
+                android:textSize="12sp"
+                android:text="暂无请求"/>
+
             <Button
                 android:id="@+id/btn_unlock"
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
                 android:layout_below="@+id/recycler_view_unlock"
-                android:background="@color/color_668FEC"
+                android:background="@color/color_E53232"
                 android:textColor="@android:color/white"
                 android:textSize="12sp"
-                android:text="解锁"/>
+                android:text="操作"/>
 
             <LinearLayout
                 android:id="@+id/linear_layout_unlock_result"
@@ -137,7 +147,7 @@
                 android:layout_below="@+id/btn_unlock"
                 android:layout_marginTop="10dp"
                 android:layout_centerHorizontal="true"
-                android:background="@color/color_8A8A8A"
+                android:background="@color/color_668FEC"
                 android:orientation="horizontal"
                 android:paddingTop="5dp"
                 android:paddingBottom="5dp">
@@ -155,6 +165,14 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="处理时间"
+                    android:textColor="@android:color/white"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="请求类型"
                     android:textColor="@android:color/white"
                     android:textSize="12sp" />
 
@@ -180,11 +198,11 @@
 
             <TextView
                 android:id="@+id/tv_no_deal_data"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_below="@+id/linear_layout_unlock_result"
                 android:layout_centerInParent="true"
-                android:gravity="center_vertical"
+                android:gravity="center"
                 android:textSize="12sp"
                 android:text="暂无请求" />
 

@@ -14,9 +14,9 @@
         android:background="@drawable/shape_search_bg_left"
         android:drawableLeft="@drawable/ic_search_black_12dp"
         android:drawablePadding="10dp"
-        android:hint="请输入姓名或身份证号"
         android:focusable="true"
         android:focusableInTouchMode="true"
+        android:hint="请输入姓名或身份证号"
         android:paddingLeft="10dp"
         android:textSize="12sp" />
 
@@ -164,14 +164,6 @@
 
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/tv_no_data"
-        android:layout_width="match_parent"
-        android:layout_height="202dp"
-        android:layout_below="@+id/linearLayout"
-        android:gravity="center"
-        android:text="暂无人员锁扣信息"
-        android:visibility="gone"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"
@@ -183,6 +175,15 @@
         android:overScrollMode="never"
         android:scrollbars="none"
         android:visibility="visible" />
+
+    <TextView
+        android:id="@+id/tv_no_data"
+        android:layout_width="match_parent"
+        android:layout_height="202dp"
+        android:layout_below="@+id/linearLayout"
+        android:gravity="center"
+        android:text="暂无人员锁扣信息"
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/tv_add_device_person"

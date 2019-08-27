@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.anlida.smartlock.R;
 import com.anlida.smartlock.listener.OnSelectListener;
 import com.anlida.smartlock.model.resp.RespDeviceManager;
+import com.anlida.smartlock.utils.ToastUtils;
 import com.anlida.smartlock.widget.DrawableCenterTextView;
 import com.anlida.smartlock.widget.SelectDeviceManagerPopupWindow;
 
@@ -43,6 +44,17 @@ public class DeviceManagerAdapter extends RecyclerView.Adapter<DeviceManagerAdap
     public void setAllSelect(boolean allSelect) {
         mAllSelect = allSelect;
         notifyDataSetChanged();
+
+        boolean isCanLock = false;
+        for (int i = 0; i < deviceManagerList.size(); i++) {
+            if (1 == deviceManagerList.get(i).getStatus()) {
+                isCanLock = true;
+            }
+        }
+
+        if (!isCanLock) {
+            ToastUtils.show(mActivity, "暂无可上锁设备");
+        }
     }
 
     public void addData(List<RespDeviceManager.DataBean.ListBean> deviceManagerList) {
@@ -50,10 +62,10 @@ public class DeviceManagerAdapter extends RecyclerView.Adapter<DeviceManagerAdap
         notifyDataSetChanged();
     }
 
-    public ArrayList<String> getSelectList(){
+    public ArrayList<String> getSelectList() {
         ArrayList arrayList = new ArrayList();
-        if(!hashSet.isEmpty()){
-            for(String s: hashSet) {
+        if (!hashSet.isEmpty()) {
+            for (String s : hashSet) {
                 arrayList.add(s);
             }
         }
@@ -71,7 +83,7 @@ public class DeviceManagerAdapter extends RecyclerView.Adapter<DeviceManagerAdap
         return holder;
     }
 
-    protected void setLeftDrawable(DrawableCenterTextView textView,@DrawableRes int res) {
+    protected void setLeftDrawable(DrawableCenterTextView textView, @DrawableRes int res) {
         if (textView != null) {
             Drawable drawable = mActivity.getResources().getDrawable(res);
             drawable.setBounds(0, 0, drawable.getMinimumWidth(), drawable.getMinimumHeight());
@@ -87,30 +99,35 @@ public class DeviceManagerAdapter extends RecyclerView.Adapter<DeviceManagerAdap
         holder.tvIdcard.setText(deviceManagerList.get(position).getIdCard());
         holder.tvPhone.setText(deviceManagerList.get(position).getPhone());
 
-        if(deviceManagerList.get(position).getStatus() == 0){
+        if (deviceManagerList.get(position).getStatus() == 0) {
             holder.tvLockStatus.setText("未上锁");
-            setLeftDrawable(holder.tvLockStatus,R.drawable.icon_3);
-        }else if(deviceManagerList.get(position).getStatus() == 1){
+            setLeftDrawable(holder.tvLockStatus, R.drawable.icon_3);
+        } else if (deviceManagerList.get(position).getStatus() == 1) {
             holder.tvLockStatus.setText("可上锁");
             holder.tvLockStatus.setTextColor(mActivity.getResources().getColor(R.color.color_F88D0E));
-            setLeftDrawable(holder.tvLockStatus,R.drawable.icon_4);
-        }else if(deviceManagerList.get(position).getStatus() == 4){
+            setLeftDrawable(holder.tvLockStatus, R.drawable.icon_4);
+        } else if (deviceManagerList.get(position).getStatus() == 4) {
             holder.tvLockStatus.setText("已上锁");
             holder.tvLockStatus.setTextColor(mActivity.getResources().getColor(R.color.color_549203));
-            setLeftDrawable(holder.tvLockStatus,R.drawable.icon_1);
-        }else if(deviceManagerList.get(position).getStatus() == 5){
+            setLeftDrawable(holder.tvLockStatus, R.drawable.icon_1);
+        } else if (deviceManagerList.get(position).getStatus() == 5) {
             holder.tvLockStatus.setText("上锁异常");
             holder.tvLockStatus.setTextColor(mActivity.getResources().getColor(R.color.color_FE400E));
-            setLeftDrawable(holder.tvLockStatus,R.drawable.icon_2);
+            setLeftDrawable(holder.tvLockStatus, R.drawable.icon_2);
         }
 
         if (mAllSelect) {
-            for (int i=0;i<deviceManagerList.size();i++){
-                hashSet.add(deviceManagerList.get(i).getImei());
+            if (1 == deviceManagerList.get(position).getStatus()) {
+                hashSet.add(deviceManagerList.get(position).getImei());
+                holder.ivSelect.setImageResource(R.drawable.btn_blue_pre);
+                holder.ivSelect.setSelected(true);
+            } else {
+                holder.ivSelect.setSelected(false);
+                holder.ivSelect.setImageResource(R.drawable.btn_blue);
             }
-            holder.ivSelect.setImageResource(R.drawable.btn_blue_pre);
+
         } else {
-            for (int i=0;i<deviceManagerList.size();i++){
+            for (int i = 0; i < deviceManagerList.size(); i++) {
                 hashSet.remove(deviceManagerList.get(i).getImei());
             }
             holder.ivSelect.setImageResource(R.drawable.btn_blue);
@@ -119,13 +136,17 @@ public class DeviceManagerAdapter extends RecyclerView.Adapter<DeviceManagerAdap
         holder.ivSelect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                holder.ivSelect.setSelected(!holder.ivSelect.isSelected());
-                if (holder.ivSelect.isSelected()) {
-                    holder.ivSelect.setImageResource(R.drawable.btn_blue_pre);
-                    hashSet.add(deviceManagerList.get(position).getImei());
+                if (1 == deviceManagerList.get(position).getStatus()) {
+                    holder.ivSelect.setSelected(!holder.ivSelect.isSelected());
+                    if (holder.ivSelect.isSelected()) {
+                        holder.ivSelect.setImageResource(R.drawable.btn_blue_pre);
+                        hashSet.add(deviceManagerList.get(position).getImei());
+                    } else {
+                        hashSet.remove(deviceManagerList.get(position).getImei());
+                        holder.ivSelect.setImageResource(R.drawable.btn_blue);
+                    }
                 } else {
-                    hashSet.remove(deviceManagerList.get(position).getImei());
-                    holder.ivSelect.setImageResource(R.drawable.btn_blue);
+                    ToastUtils.show(mActivity, "只有可上锁设备可以选择");
                 }
             }
         });
@@ -134,7 +155,7 @@ public class DeviceManagerAdapter extends RecyclerView.Adapter<DeviceManagerAdap
             @Override
             public void onClick(View v) {
                 holder.ivMore.setImageResource(R.drawable.btn_more_pre);
-                SelectDeviceManagerPopupWindow selectDeviceManagerPopupWindow = new SelectDeviceManagerPopupWindow(mActivity,deviceManagerList.get(position), new OnSelectListener() {
+                SelectDeviceManagerPopupWindow selectDeviceManagerPopupWindow = new SelectDeviceManagerPopupWindow(mActivity, deviceManagerList.get(position), new OnSelectListener() {
                     @Override
                     public void onSelect(String province, String city, String busGroup) {
 
@@ -153,9 +174,9 @@ public class DeviceManagerAdapter extends RecyclerView.Adapter<DeviceManagerAdap
 
     @Override
     public int getItemCount() {
-        if(deviceManagerList==null || deviceManagerList.size()==0){
+        if (deviceManagerList == null || deviceManagerList.size() == 0) {
             return 0;
-        }else {
+        } else {
             return deviceManagerList.size();
         }
     }

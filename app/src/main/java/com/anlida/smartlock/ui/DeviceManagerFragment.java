@@ -173,6 +173,7 @@ public class DeviceManagerFragment extends LazyLoadFragment {
                     public void onNext(RespDeviceManager respDeviceManager) {
                         if(respDeviceManager.getData()==null || respDeviceManager.getData().getList().size()==0){
                             tvNoData.setVisibility(View.VISIBLE);
+
                         }else {
                             tvNoData.setVisibility(View.GONE);
                             deviceManagerAdapter.setData(respDeviceManager.getData().getList());
@@ -192,6 +193,7 @@ public class DeviceManagerFragment extends LazyLoadFragment {
                     public void onNext(RespDeviceManager respDeviceManager) {
                         if(respDeviceManager.getData()==null || respDeviceManager.getData().getList().size()==0){
                             tvNoData.setVisibility(View.VISIBLE);
+                            deviceManagerAdapter.setData(respDeviceManager.getData().getList());
                         }else {
                             tvNoData.setVisibility(View.GONE);
                             deviceManagerAdapter.setData(respDeviceManager.getData().getList());
@@ -206,9 +208,9 @@ public class DeviceManagerFragment extends LazyLoadFragment {
 
         for (int i =0 ;i <list.size();i++){
             if(i==0) {
-                stringBuffer.append(Integer.parseInt(list.get(i)));
+                stringBuffer.append(list.get(i));
             }else {
-                stringBuffer.append(","+Integer.parseInt(list.get(i)));
+                stringBuffer.append(","+list.get(i));
             }
         }
 
@@ -224,6 +226,7 @@ public class DeviceManagerFragment extends LazyLoadFragment {
                             } else {
                                 DialogUtil.showDialogLock(getActivity(), false);
                             }
+                            getDeviceManager(1, 300);
                         }else {
                             ToastUtils.show(context,"上锁失败");
                         }
