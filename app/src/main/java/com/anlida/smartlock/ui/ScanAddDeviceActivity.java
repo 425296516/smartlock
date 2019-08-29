@@ -41,7 +41,7 @@ public class ScanAddDeviceActivity extends FMActivity {
     @BindView(R.id.tv_scan_title)
     TextView tvScanTitle;
     @BindView(R.id.et_imei)
-    TextView etImei;
+    EditText etImei;
     @BindView(R.id.et_input_name)
     EditText etInputName;
     @BindView(R.id.et_input_wordid)
@@ -60,7 +60,7 @@ public class ScanAddDeviceActivity extends FMActivity {
     RadioButton cbWoman;
     @BindView(R.id.tv_submit)
     TextView tvSubmit;
-    private String mImei;
+    //private String mImei;
 
     @Override
     protected int getLayoutId() {
@@ -79,13 +79,13 @@ public class ScanAddDeviceActivity extends FMActivity {
                 break;
 
             case R.id.tv_submit:
-                if (!TextUtils.isEmpty(mImei) && !TextUtils.isEmpty(etInputName.getText().toString()) && !TextUtils.isEmpty(etInputWordid.getText().toString())
+                if (!TextUtils.isEmpty(etImei.getText().toString()) && !TextUtils.isEmpty(etInputName.getText().toString()) && !TextUtils.isEmpty(etInputWordid.getText().toString())
                         && !TextUtils.isEmpty(etInputIdcard.getText().toString()) && !TextUtils.isEmpty(etInputPhone.getText().toString())
                         && !TextUtils.isEmpty(etInputAge.getText().toString()) && !TextUtils.isEmpty(tvInputBloodtype.getText().toString())) {
 
                     if (RegexUtils.isMobileExact(etInputPhone.getText().toString())) {
                         if (RegexUtils.isIDCard18(etInputIdcard.getText().toString())) {
-                            addDeviceAndUser(DataWarehouse.getUserId(), mImei, etInputName.getText().toString(),
+                            addDeviceAndUser(DataWarehouse.getUserId(), etImei.getText().toString(), etInputName.getText().toString(),
                                     etInputWordid.getText().toString(), etInputIdcard.getText().toString(), etInputPhone.getText().toString(),
                                     etInputAge.getText().toString(), tvInputBloodtype.getText().toString(), cbMan.isChecked() ? "1" : "2");
                         } else {
@@ -148,7 +148,7 @@ public class ScanAddDeviceActivity extends FMActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void bindDeviceLock(QREvent event) {
         String result = event.getResult();
-        mImei = result.replace("imei:", "");
+        etImei.setText(result.replace("imei:", ""));
         ToastUtils.show(context, "扫描成功");
     }
 

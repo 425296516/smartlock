@@ -243,7 +243,7 @@ public class DeviceManagerFragment extends LazyLoadFragment {
                     @Override
                     public void onNext(RespRemoteToken respRemoteToken) {
                         DataWarehouse.setAccessToken("Bearer " + respRemoteToken.getAccess_token());
-                        deviceLock(deviceManagerAdapter.getSelectList(), "H11");
+                        deviceLock(deviceManagerAdapter.getSelectList(), "O33");
                     }
                 });
     }

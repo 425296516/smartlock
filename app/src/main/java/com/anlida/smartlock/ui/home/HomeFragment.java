@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -233,7 +234,7 @@ public class HomeFragment extends LazyLoadFragment implements AMap.OnMarkerClick
 
 
     private void getWarningRecord(int pageNum, int pageSize) {
-        ReqWarnRecord reqDeviceManager = new ReqWarnRecord(pageNum, pageSize);
+        ReqWarnRecord reqDeviceManager = new ReqWarnRecord(pageNum, pageSize, DataWarehouse.getUserId());
         HttpClient.getInstance().service.getWarningRecord(reqDeviceManager)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -241,7 +242,7 @@ public class HomeFragment extends LazyLoadFragment implements AMap.OnMarkerClick
                     @Override
                     public void onNext(RespWarnRecord respWarnRecord) {
                         if (respWarnRecord.getData().getList().size() > 0) {
-                            rlMonitorWarn.setVisibility(View.VISIBLE);
+                            //rlMonitorWarn.setVisibility(View.VISIBLE);
 
                             List<RespWarnRecord.DataBean.ListBean> listBeans = new ArrayList<>();
                             List<RespWarnRecord.DataBean.ListBean> dealBeans = new ArrayList<>();
@@ -270,7 +271,7 @@ public class HomeFragment extends LazyLoadFragment implements AMap.OnMarkerClick
                                 wrAdapterResult.setData(dealBeans);
                             }
                         } else {
-                            rlMonitorWarn.setVisibility(View.GONE);
+                            //rlMonitorWarn.setVisibility(View.GONE);
                             ivLeftRight.setImageResource(R.drawable.btn_left);
 
                             tvNoWarnData.setVisibility(View.VISIBLE);
@@ -288,24 +289,12 @@ public class HomeFragment extends LazyLoadFragment implements AMap.OnMarkerClick
                     @Override
                     public void onNext(RespWarnRecord respWarnRecord) {
                         if (0 == respWarnRecord.getCode() && respWarnRecord.getData().getList().size() > 0) {
-                            rlUnlock.setVisibility(View.VISIBLE);
-
-                          List<RespWarnRecord.DataBean.ListBean> listBeans = new ArrayList<>();
-                            listBeans = respWarnRecord.getData().getList();
-
-                            if (listBeans.size() == 0) {
-                                tvNoPleaseData.setVisibility(View.VISIBLE);
-                                unLockAdapter.setData(listBeans);
-                            } else {
-                                tvNoPleaseData.setVisibility(View.GONE);
-                                unLockAdapter.setData(listBeans);
-                            }
+                            tvNoPleaseData.setVisibility(View.GONE);
+                            unLockAdapter.setData(respWarnRecord.getData().getList());
 
                         } else {
-                            rlUnlock.setVisibility(View.GONE);
-
                             tvNoPleaseData.setVisibility(View.VISIBLE);
-                            tvNoDealData.setVisibility(View.VISIBLE);
+                            unLockAdapter.setData(null);
                             ivTopBottom.setImageResource(R.drawable.btn_top);
                         }
                     }
@@ -321,24 +310,11 @@ public class HomeFragment extends LazyLoadFragment implements AMap.OnMarkerClick
                     @Override
                     public void onNext(RespWarnRecord respWarnRecord) {
                         if (0 == respWarnRecord.getCode() && respWarnRecord.getData().getList().size() > 0) {
-                            rlUnlock.setVisibility(View.VISIBLE);
-
-                            List<RespWarnRecord.DataBean.ListBean> dealBeans = new ArrayList<>();
-                            dealBeans = respWarnRecord.getData().getList();
-
-                            if (dealBeans.size() == 0) {
-                                tvNoDealData.setVisibility(View.VISIBLE);
-                                unLockResultAdapter.setData(dealBeans);
-                            } else {
-                                tvNoDealData.setVisibility(View.GONE);
-                                unLockResultAdapter.setData(dealBeans);
-                            }
-
+                            tvNoDealData.setVisibility(View.GONE);
+                            unLockResultAdapter.setData(respWarnRecord.getData().getList());
                         } else {
-                            rlUnlock.setVisibility(View.GONE);
-
-                            tvNoPleaseData.setVisibility(View.VISIBLE);
                             tvNoDealData.setVisibility(View.VISIBLE);
+                            unLockResultAdapter.setData(null);
                             ivTopBottom.setImageResource(R.drawable.btn_top);
                         }
                     }
@@ -365,14 +341,14 @@ public class HomeFragment extends LazyLoadFragment implements AMap.OnMarkerClick
         StringBuffer stringBuffer = new StringBuffer();
         ArrayList<RespWarnRecord.DataBean.ListBean> list = unLockAdapter.getSelectList();
 
-        for (int i =0 ;i <list.size();i++){
-            if(list.get(i).getWarningType().equals("请求上锁")) {
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).getWarningType().equals("请求上锁")) {
                 stringBuffer.append("," + list.get(i).getImei());
             }
         }
 
-        if(stringBuffer.length()>0) {
-            HttpClient.getInstance(HttpClient.BASE_URL_CONTROL).service.deviceLocks(DataWarehouse.getUserId(), "H11", stringBuffer.toString().substring(1, stringBuffer.length()))
+        if (stringBuffer.length() > 0) {
+            HttpClient.getInstance(HttpClient.BASE_URL_CONTROL).service.deviceLocks(DataWarehouse.getUserId(), "O33", stringBuffer.toString().substring(1, stringBuffer.length()))
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new FMSubscriber<HttpResult>() {
@@ -394,11 +370,11 @@ public class HomeFragment extends LazyLoadFragment implements AMap.OnMarkerClick
         ArrayList<RespWarnRecord.DataBean.ListBean> list = unLockAdapter.getSelectList();
 
         for (int i = 0; i < list.size(); i++) {
-            if(list.get(i).getWarningType().equals("请求解锁")) {
+            if (list.get(i).getWarningType().equals("请求解锁")) {
                 stringBuffer.append("," + list.get(i).getImei());
             }
         }
-        if(stringBuffer.length()>0) {
+        if (stringBuffer.length() > 0) {
             HttpClient.getInstance(HttpClient.BASE_URL_CONTROL).service.deviceunLock("S44", stringBuffer.toString().substring(1, stringBuffer.length()))
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -426,11 +402,16 @@ public class HomeFragment extends LazyLoadFragment implements AMap.OnMarkerClick
                 .subscribe(new FMSubscriber<RespWarnLocation>() {
                     @Override
                     public void onNext(RespWarnLocation respWarnLocation) {
-                        for (int i = 0; i < respWarnLocation.getData().size(); i++) {
-                            if(respWarnLocation.getData().get(i).getLatitude()>0 && respWarnLocation.getData().get(i).getLongitude()>0) {
-                                addCarMarkerToMap(respWarnLocation.getData().get(i).getLatitude(), respWarnLocation.getData().get(i).getLongitude());
+                        new Handler().postDelayed(new Runnable() {//目的是替换定位的
+                            @Override
+                            public void run() {
+                                for (int i = 0; i < respWarnLocation.getData().size(); i++) {
+                                    if (respWarnLocation.getData().get(i).getLatitude() > 0 && respWarnLocation.getData().get(i).getLongitude() > 0) {
+                                        addCarMarkerToMap(respWarnLocation.getData().get(i).getLatitude(), respWarnLocation.getData().get(i).getLongitude());
+                                    }
+                                }
                             }
-                        }
+                        }, 500);
                     }
                 });
     }
@@ -620,7 +601,7 @@ public class HomeFragment extends LazyLoadFragment implements AMap.OnMarkerClick
         if (aMap != null && aMap.getMyLocation() != null && aMap.getMyLocation().getLatitude() != 0) {
             aMap.setMyLocationEnabled(true);
             aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(aMap.getMyLocation().getLatitude(),
-                    aMap.getMyLocation().getLongitude()), 400f));
+                    aMap.getMyLocation().getLongitude()), 100f));
         }
     }
 
@@ -665,11 +646,12 @@ public class HomeFragment extends LazyLoadFragment implements AMap.OnMarkerClick
         MyLocationStyle myLocationStyle = new MyLocationStyle();
         myLocationStyle.myLocationIcon(BitmapDescriptorFactory.fromResource(R.drawable.icon_my_location));
         //myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATE);
-        myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE_NO_CENTER);
+        myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATE);
         myLocationStyle.radiusFillColor(getResources().getColor(android.R.color.transparent));
         myLocationStyle.strokeColor(getResources().getColor(android.R.color.transparent));
 
         aMap.setMyLocationStyle(myLocationStyle);
+
     }
 
 

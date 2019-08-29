@@ -119,7 +119,7 @@ public class WarningRecordFragment extends LazyLoadFragment {
 
 
     private void getWarningRecord(int pageNum, int pageSize) {
-        ReqWarnRecord reqDeviceManager = new ReqWarnRecord(pageNum, pageSize);
+        ReqWarnRecord reqDeviceManager = new ReqWarnRecord(pageNum, pageSize,DataWarehouse.getUserId());
         HttpClient.getInstance().service.getWarningRecord(reqDeviceManager)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

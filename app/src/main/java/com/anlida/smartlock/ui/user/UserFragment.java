@@ -196,13 +196,11 @@ public class UserFragment extends LazyLoadFragment {
             @Override
             public void onClick(View v) {
                 if (!TextUtils.isEmpty(etInputPhone.getText().toString()) && !TextUtils.isEmpty(etCode.getText().toString())) {
-                    if (alertDialog != null) {
-                        alertDialog.dismiss();
-                    }
+
                     if (view.getId() == R.id.tv_update) {
-                        updatePhone(etInputPhone.getText().toString(), etCode.getText().toString());
+                        updatePhone(etInputPhone.getText().toString(), etCode.getText().toString(),alertDialog);
                     } else if (view.getId() == R.id.tv_urgent_update) {
-                        updateLiablePhone(etInputPhone.getText().toString(), etCode.getText().toString());
+                        updateLiablePhone(etInputPhone.getText().toString(), etCode.getText().toString(),alertDialog);
                     }
                 }
             }
@@ -221,7 +219,7 @@ public class UserFragment extends LazyLoadFragment {
     }
 
 
-    public void updatePhone(String mobile, String code) {
+    public void updatePhone(String mobile, String code,AlertDialog alertDialog) {
         ReqUpdatePhone reqUpdatePhone = new ReqUpdatePhone(id, mobile, code);
         HttpClient.getInstance().service.updatePhone(reqUpdatePhone)
                 .subscribeOn(Schedulers.io())
@@ -232,14 +230,20 @@ public class UserFragment extends LazyLoadFragment {
                         if ("200".equals(httpResult.getCode())) {
                             ToastUtils.show(context, "修改成功");
                             tvPhone.setText(mobile);
-                        } else {
+
+                            if (alertDialog != null) {
+                                alertDialog.dismiss();
+                            }
+                        }  else   if ("600".equals(httpResult.getCode())) {
+                            ToastUtils.show(context, "验证码错误");
+                        } if ("500".equals(httpResult.getCode())) {
                             ToastUtils.show(context, "修改失败");
                         }
                     }
                 });
     }
 
-    public void updateLiablePhone(String mobile, String code) {
+    public void updateLiablePhone(String mobile, String code,AlertDialog alertDialog) {
         ReqUpdatePhone reqUpdatePhone = new ReqUpdatePhone(liableId, mobile, code);
         HttpClient.getInstance().service.updateXietongPhone(reqUpdatePhone)
                 .subscribeOn(Schedulers.io())
@@ -250,7 +254,13 @@ public class UserFragment extends LazyLoadFragment {
                         if ("200".equals(httpResult.getCode())) {
                             ToastUtils.show(context, "修改成功");
                             tvUrgentPhone.setText(mobile);
-                        } else {
+
+                            if (alertDialog != null) {
+                                alertDialog.dismiss();
+                            }
+                        } else   if ("600".equals(httpResult.getCode())) {
+                            ToastUtils.show(context, "验证码错误");
+                        } if ("500".equals(httpResult.getCode())) {
                             ToastUtils.show(context, "修改失败");
                         }
                     }
