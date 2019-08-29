@@ -61,7 +61,7 @@ public interface RestAPI {
 
     //获取预警设备位置的接口
     @GET("/warninglog/getCoordinate")
-    Flowable<RespWarnLocation> getWarningLocation();
+    Flowable<RespWarnLocation> getWarningLocation(@Query("updateBy") String updateBy);
 
     //获取预警记录接口
     @POST("/warninglog/page")

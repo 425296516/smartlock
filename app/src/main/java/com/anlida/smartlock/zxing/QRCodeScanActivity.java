@@ -225,6 +225,7 @@ public class QRCodeScanActivity extends AppCompatActivity implements SurfaceHold
         } else {
             QREvent event = new QREvent();
             event.setResult(resultString);
+            event.setPageType(pageType);
             EventBus.getDefault().post(event);
 
             finish();

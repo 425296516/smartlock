@@ -4,10 +4,11 @@ import java.util.List;
 
 public class RespWarnLocation {
 
+
     /**
      * msg : success
      * code : 0
-     * data : [{"id":6,"createBy":null,"updateBy":null,"createDate":null,"updateDate":null,"remarks":null,"delFlag":null,"sort":null,"pageNum":null,"pageSize":null,"imei":"123456","uname":null,"phone":null,"name":null,"warningType":null,"status":0,"longitude":"118.6282","latitude":"32.059","content":null},{"id":7,"createBy":null,"updateBy":null,"createDate":null,"updateDate":null,"remarks":null,"delFlag":null,"sort":null,"pageNum":null,"pageSize":null,"imei":"1234567","uname":null,"phone":null,"name":null,"warningType":null,"status":0,"longitude":"118.6252","latitude":"32.059","content":null}]
+     * data : [{"id":11,"createBy":null,"updateBy":null,"createDate":null,"updateDate":null,"remarks":null,"delFlag":null,"sort":null,"pageNum":null,"pageSize":null,"imei":"1","uname":"2","phone":"5","idCard":"4","name":null,"warningType":"CO2报警","status":1,"longitude":"118.7178250000","latitude":"32.2045140000","content":null,"createTime":null,"updateTime":null},{"id":13,"createBy":null,"updateBy":null,"createDate":null,"updateDate":null,"remarks":null,"delFlag":null,"sort":null,"pageNum":null,"pageSize":null,"imei":"3","uname":"1","phone":"4","idCard":"3","name":null,"warningType":"CO2报警","status":1,"longitude":"118.7178250000","latitude":"32.1045140000","content":null,"createTime":null,"updateTime":null}]
      */
 
     private String msg;
@@ -40,7 +41,7 @@ public class RespWarnLocation {
 
     public static class DataBean {
         /**
-         * id : 6
+         * id : 11
          * createBy : null
          * updateBy : null
          * createDate : null
@@ -50,15 +51,18 @@ public class RespWarnLocation {
          * sort : null
          * pageNum : null
          * pageSize : null
-         * imei : 123456
-         * uname : null
-         * phone : null
+         * imei : 1
+         * uname : 2
+         * phone : 5
+         * idCard : 4
          * name : null
-         * warningType : null
-         * status : 0
-         * longitude : 118.6282
-         * latitude : 32.059
+         * warningType : CO2报警
+         * status : 1
+         * longitude : 118.7178250000
+         * latitude : 32.2045140000
          * content : null
+         * createTime : null
+         * updateTime : null
          */
 
         private int id;
@@ -72,14 +76,18 @@ public class RespWarnLocation {
         private Object pageNum;
         private Object pageSize;
         private String imei;
-        private Object uname;
-        private Object phone;
+        private String uname;
+        private String phone;
+        private String idCard;
         private Object name;
-        private Object warningType;
+        private String bloodType;
+        private String warningType;
         private int status;
         private double longitude;
         private double latitude;
         private Object content;
+        private Object createTime;
+        private Object updateTime;
 
         public int getId() {
             return id;
@@ -169,20 +177,28 @@ public class RespWarnLocation {
             this.imei = imei;
         }
 
-        public Object getUname() {
+        public String getUname() {
             return uname;
         }
 
-        public void setUname(Object uname) {
+        public void setUname(String uname) {
             this.uname = uname;
         }
 
-        public Object getPhone() {
+        public String getPhone() {
             return phone;
         }
 
-        public void setPhone(Object phone) {
+        public void setPhone(String phone) {
             this.phone = phone;
+        }
+
+        public String getIdCard() {
+            return idCard;
+        }
+
+        public void setIdCard(String idCard) {
+            this.idCard = idCard;
         }
 
         public Object getName() {
@@ -193,11 +209,19 @@ public class RespWarnLocation {
             this.name = name;
         }
 
-        public Object getWarningType() {
+        public String getBloodType() {
+            return bloodType;
+        }
+
+        public void setBloodType(String bloodType) {
+            this.bloodType = bloodType;
+        }
+
+        public String getWarningType() {
             return warningType;
         }
 
-        public void setWarningType(Object warningType) {
+        public void setWarningType(String warningType) {
             this.warningType = warningType;
         }
 
@@ -231,6 +255,22 @@ public class RespWarnLocation {
 
         public void setContent(Object content) {
             this.content = content;
+        }
+
+        public Object getCreateTime() {
+            return createTime;
+        }
+
+        public void setCreateTime(Object createTime) {
+            this.createTime = createTime;
+        }
+
+        public Object getUpdateTime() {
+            return updateTime;
+        }
+
+        public void setUpdateTime(Object updateTime) {
+            this.updateTime = updateTime;
         }
     }
 }

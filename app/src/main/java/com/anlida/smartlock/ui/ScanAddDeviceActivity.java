@@ -147,6 +147,10 @@ public class ScanAddDeviceActivity extends FMActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void bindDeviceLock(QREvent event) {
+        tvScanTitle.setText("添加设备信息");
+        etImei.setVisibility(View.VISIBLE);
+        ivScanCode.setVisibility(View.GONE);
+
         String result = event.getResult();
         etImei.setText(result.replace("imei:", ""));
         ToastUtils.show(context, "扫描成功");

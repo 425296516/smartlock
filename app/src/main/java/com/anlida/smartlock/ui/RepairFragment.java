@@ -62,24 +62,24 @@ public class RepairFragment extends LazyLoadFragment {
         return true;
     }
 
-    @OnClick({R.id.tv_submit,R.id.iv_scan_code})
+    @OnClick({R.id.tv_submit, R.id.iv_scan_code})
     public void onClick(View v) {
         switch (v.getId()) {
 
             case R.id.iv_scan_code:
 
                 Intent intent = new Intent(context, QRCodeScanActivity.class);
-                intent.putExtra("PAGE_TYPE","RepairFragment");
+                intent.putExtra("PAGE_TYPE", "RepairFragment");
                 startActivity(intent);
 
                 break;
 
             case R.id.tv_submit:
 
-                if(!TextUtils.isEmpty(etRepairBecause.getText().toString()) && !TextUtils.isEmpty(etInputImei.getText().toString())) {
+                if (!TextUtils.isEmpty(etRepairBecause.getText().toString()) && !TextUtils.isEmpty(etInputImei.getText().toString())) {
                     uploadRepairInfo(etRepairBecause.getText().toString(), etInputImei.getText().toString());
-                }else {
-                    ToastUtils.show(context,"请输入IMEI和报修报损原因");
+                } else {
+                    ToastUtils.show(context, "请输入IMEI和报修报损原因");
                 }
                 break;
         }
@@ -89,19 +89,18 @@ public class RepairFragment extends LazyLoadFragment {
     public void getImei(QREvent event) {
         String result = event.getResult();
         String pageType = event.getPageType();
-        if(!TextUtils.isEmpty(result)) {
-            String mImei = result.replace("imei:", "");
-            etInputImei.setVisibility(View.VISIBLE);
-            etInputImei.setText(mImei);
-            ivScanCode.setVisibility(View.GONE);
-            ToastUtils.show(context, "扫描成功");
-        }else {
-            if(!TextUtils.isEmpty(pageType)) {
+        if ("RepairFragment".equals(pageType)) {
+            if (!TextUtils.isEmpty(result)) {
+                String mImei = result.replace("imei:", "");
+                etInputImei.setVisibility(View.VISIBLE);
+                etInputImei.setText(mImei);
+                ivScanCode.setVisibility(View.GONE);
+                ToastUtils.show(context, "扫描成功");
+            } else {
                 etInputImei.setVisibility(View.VISIBLE);
                 ivScanCode.setVisibility(View.GONE);
             }
         }
-
     }
 
     @Override
