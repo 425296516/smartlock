@@ -113,8 +113,6 @@ public class HomeFragment extends LazyLoadFragment implements AMap.OnMarkerClick
     TextView tvNoResultData;
     @BindView(R.id.tv_all_select)
     TextView tvAllSelect;
-    @BindView(R.id.btn_unlock)
-    Button btnUnlock;
 
     private AMap aMap;
 
@@ -257,6 +255,7 @@ public class HomeFragment extends LazyLoadFragment implements AMap.OnMarkerClick
                                 tvNoWarnData.setVisibility(View.VISIBLE);
                                 warnRecordAdapter.setData(listBeans);
                             } else {
+                                rlMonitorWarn.setVisibility(View.VISIBLE);
                                 tvNoWarnData.setVisibility(View.GONE);
                                 warnRecordAdapter.setData(listBeans);
                             }
@@ -287,13 +286,13 @@ public class HomeFragment extends LazyLoadFragment implements AMap.OnMarkerClick
                     @Override
                     public void onNext(RespWarnRecord respWarnRecord) {
                         if (0 == respWarnRecord.getCode() && respWarnRecord.getData().getList().size() > 0) {
+                            rlUnlock.setVisibility(View.VISIBLE);
                             tvNoPleaseData.setVisibility(View.GONE);
                             unLockAdapter.setData(respWarnRecord.getData().getList());
 
                         } else {
                             tvNoPleaseData.setVisibility(View.VISIBLE);
                             unLockAdapter.setData(null);
-                            ivTopBottom.setImageResource(R.drawable.btn_top);
                         }
                     }
                 });
@@ -457,7 +456,7 @@ public class HomeFragment extends LazyLoadFragment implements AMap.OnMarkerClick
             case R.id.iv_top_bottom:
 
                 if (rlUnlock.getVisibility() == View.VISIBLE) {
-                    rlPleaseUnlock.setVisibility(View.GONE);
+
                     Animation animation = AnimationUtils.loadAnimation(context, R.anim.unlock_hide);
                     rlPleaseUnlock.startAnimation(animation);
 
@@ -469,7 +468,7 @@ public class HomeFragment extends LazyLoadFragment implements AMap.OnMarkerClick
 
                         @Override
                         public void onAnimationEnd(Animation animation) {
-                            rlPleaseUnlock.setVisibility(View.VISIBLE);
+
                             rlUnlock.setVisibility(View.GONE);
                             ivTopBottom.setImageResource(R.drawable.btn_top);
                         }

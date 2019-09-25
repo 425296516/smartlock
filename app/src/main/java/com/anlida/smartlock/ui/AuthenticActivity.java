@@ -155,6 +155,7 @@ public class AuthenticActivity extends FMActivity {
                     @Override
                     public void onNext(HttpResult httpResult) {
                         if("0".equals(httpResult.getCode())) {
+                            DataWarehouse.setLogin(true);
                             MainActivity.start(AuthenticActivity.this);
                             finish();
                         }
@@ -172,7 +173,7 @@ public class AuthenticActivity extends FMActivity {
         switch (v.getId()) {
 
             case R.id.tv_get_verficode:
-                if(RegexUtils.isMobileExact(etPhone.getText().toString())) {
+                if(RegexUtils.isMobileSimple(etPhone.getText().toString())) {
                     sendCaptcha(etPhone.getText().toString());
                 }else {
                     ToastUtils.show(context,"请输入正确的手机号");
@@ -204,7 +205,7 @@ public class AuthenticActivity extends FMActivity {
                 &&!TextUtils.isEmpty(etIdcard.getText().toString()) && !TextUtils.isEmpty(etPhone.getText().toString())
                 &&!TextUtils.isEmpty(etSaddress.getText().toString()) && !TextUtils.isEmpty(etSbs.getText().toString())&& !TextUtils.isEmpty(etSworkType.getText().toString())
                 &&!TextUtils.isEmpty(etSName.getText().toString()) && !TextUtils.isEmpty(etSworkid.getText().toString())&& !TextUtils.isEmpty(etSidcard.getText().toString())) {
-                    if(RegexUtils.isMobileExact(etPhone.getText().toString()) && RegexUtils.isMobileExact(etSphone.getText().toString())) {
+                    if(RegexUtils.isMobileSimple(etPhone.getText().toString()) && RegexUtils.isMobileSimple(etSphone.getText().toString())) {
                         if (RegexUtils.isIDCard18(etIdcard.getText().toString()) && RegexUtils.isIDCard18(etSidcard.getText().toString())) {
                             ReqWorkerInfo reqWorkerInfo = new ReqWorkerInfo(DataWarehouse.getUserId(),
                                     tvSelectCity.getText().toString(), etWorkName.getText().toString(), etBys.getText().toString(),

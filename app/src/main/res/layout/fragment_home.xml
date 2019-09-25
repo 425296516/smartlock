@@ -31,7 +31,7 @@
     <RelativeLayout
         android:id="@+id/rl_please_unlock"
         android:layout_width="240dp"
-        android:layout_height="340dp"
+        android:layout_height="345dp"
         android:layout_marginTop="5dp">
 
         <ImageView
@@ -39,7 +39,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/btn_bottom"
-            android:paddingBottom="10dp"
+            android:paddingBottom="15dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
             android:layout_below="@+id/rl_unlock"
             android:layout_centerHorizontal="true" />
 
@@ -212,7 +214,7 @@
 
     <RelativeLayout
         android:id="@+id/rl_please_monitor_warn"
-        android:layout_width="260dp"
+        android:layout_width="265dp"
         android:layout_height="250dp"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
@@ -223,7 +225,9 @@
             android:layout_height="wrap_content"
             android:layout_toLeftOf="@+id/rl_monitor_warn"
             android:layout_centerVertical="true"
-            android:paddingLeft="10dp"
+            android:paddingTop="15dp"
+            android:paddingBottom="15dp"
+            android:paddingLeft="15dp"
             android:layoutDirection="rtl">
 
             <ImageView

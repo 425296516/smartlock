@@ -121,6 +121,7 @@ public class LoginActivity extends FMActivity {
                                 MainActivity.start(LoginActivity.this);
                                 finish();
                             } else {
+                                DataWarehouse.setLogin(false);
                                 startActivity(new Intent(context, AuthenticActivity.class));
                                 finish();
                             }

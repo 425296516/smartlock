@@ -116,6 +116,7 @@ public class DeviceManagerAdapter extends RecyclerView.Adapter<DeviceManagerAdap
             setLeftDrawable(holder.tvLockStatus, R.drawable.icon_2);
         }
 
+
         if (mAllSelect) {
             if (1 == deviceManagerList.get(position).getStatus()) {
                 hashSet.add(deviceManagerList.get(position).getImei());

@@ -83,7 +83,7 @@ public class ScanAddDeviceActivity extends FMActivity {
                         && !TextUtils.isEmpty(etInputIdcard.getText().toString()) && !TextUtils.isEmpty(etInputPhone.getText().toString())
                         && !TextUtils.isEmpty(etInputAge.getText().toString()) && !TextUtils.isEmpty(tvInputBloodtype.getText().toString())) {
 
-                    if (RegexUtils.isMobileExact(etInputPhone.getText().toString())) {
+                    if (RegexUtils.isMobileSimple(etInputPhone.getText().toString())) {
                         if (RegexUtils.isIDCard18(etInputIdcard.getText().toString())) {
                             addDeviceAndUser(DataWarehouse.getUserId(), etImei.getText().toString(), etInputName.getText().toString(),
                                     etInputWordid.getText().toString(), etInputIdcard.getText().toString(), etInputPhone.getText().toString(),

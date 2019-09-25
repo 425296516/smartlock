@@ -175,7 +175,7 @@ public class UserFragment extends LazyLoadFragment {
         tvGetCode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(RegexUtils.isMobileExact(etInputPhone.getText().toString())) {
+                if(RegexUtils.isMobileSimple(etInputPhone.getText().toString())) {
                     HttpClient.getInstance().service.getVerifiCode(etInputPhone.getText().toString())
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
