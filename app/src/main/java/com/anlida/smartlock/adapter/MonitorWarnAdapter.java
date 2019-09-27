@@ -82,7 +82,7 @@ public class MonitorWarnAdapter extends RecyclerView.Adapter<MonitorWarnAdapter.
             holder.tvTime.setText("" + time);
         } else {
             String time = listBeans.get(position).getUpdateTime();
-            holder.tvTime.setText(""+time);
+            holder.tvTime.setText("" + time);
         }
 
         if (mType == 1) {
@@ -93,17 +93,20 @@ public class MonitorWarnAdapter extends RecyclerView.Adapter<MonitorWarnAdapter.
                 public void onClick(View v) {
                     RespWarnRecord.DataBean.ListBean listBean = listBeans.get(position);
 
-                    dealWarningRecord(listBean.getId()+"","2");
-
-                    DialogUtil.showDialogunLock(mActivity, listBean.getUname(),listBean.getPhone(),new View.OnClickListener() {
+                    DialogUtil.showDialogunLock(mActivity, listBean.getUname(), listBean.getPhone(), new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            DialogUtil.showDialogunLockConfirm(mActivity, new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    getRemoteToken(listBean.getImei());
-                                }
-                            });
+                            if (v.getId() == R.id.tv_dialog_cancel_warn) {
+                                dealWarningRecord(listBean.getId() + "", "2");
+                            } else {
+                                DialogUtil.showDialogunLockConfirm(mActivity, new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        getRemoteToken(listBean.getImei());
+                                        dealWarningRecord(listBean.getId() + "", "2");
+                                    }
+                                });
+                            }
                         }
                     });
                 }
@@ -150,15 +153,15 @@ public class MonitorWarnAdapter extends RecyclerView.Adapter<MonitorWarnAdapter.
 
 
     private void dealWarningRecord(String id, String status) {
-        ReqDealWarning reqDealWarning = new ReqDealWarning(id, DataWarehouse.getUserId(),status);
+        ReqDealWarning reqDealWarning = new ReqDealWarning(id, DataWarehouse.getUserId(), status);
         HttpClient.getInstance().service.dealWarningRecord(reqDealWarning)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new FMSubscriber<RespWarnRecord>() {
                     @Override
                     public void onNext(RespWarnRecord respDeviceManager) {
-                        if(0 ==respDeviceManager.getCode()){
-                            ToastUtils.show(mActivity,"处理成功");
+                        if (0 == respDeviceManager.getCode()) {
+                            ToastUtils.show(mActivity, "处理成功");
                             UpdateWarnRecord event = new UpdateWarnRecord();
                             EventBus.getDefault().post(event);
                         }

@@ -80,18 +80,21 @@ public class WarnRecordAdapter extends RecyclerView.Adapter<WarnRecordAdapter.Wa
                 @Override
                 public void onClick(View v) {
                     RespWarnRecord.DataBean.ListBean listBean = listBeans.get(position);
-                    dealWarningRecord(listBean.getId()+"",DataWarehouse.getUserId(),"2");
 
                     DialogUtil.showDialogunLock(mActivity, listBean.getUname(),listBean.getPhone(),new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-
-                            DialogUtil.showDialogunLockConfirm(mActivity, new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    getRemoteToken(listBean.getImei());
-                                }
-                            });
+                            if (v.getId() == R.id.tv_dialog_cancel_warn){
+                                dealWarningRecord(listBean.getId()+"",DataWarehouse.getUserId(),"2");
+                            }else {
+                                DialogUtil.showDialogunLockConfirm(mActivity, new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        dealWarningRecord(listBean.getId()+"",DataWarehouse.getUserId(),"2");
+                                        getRemoteToken(listBean.getImei());
+                                    }
+                                });
+                            }
                         }
                     });
                 }

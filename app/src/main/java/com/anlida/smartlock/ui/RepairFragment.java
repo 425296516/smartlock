@@ -77,7 +77,11 @@ public class RepairFragment extends LazyLoadFragment {
             case R.id.tv_submit:
 
                 if (!TextUtils.isEmpty(etRepairBecause.getText().toString()) && !TextUtils.isEmpty(etInputImei.getText().toString())) {
-                    uploadRepairInfo(etRepairBecause.getText().toString(), etInputImei.getText().toString());
+                    if(etInputImei.getText().toString().length()==16) {
+                        uploadRepairInfo(etRepairBecause.getText().toString(), etInputImei.getText().toString());
+                    }else {
+                        ToastUtils.show(context, "请输入正确的IMEI号码");
+                    }
                 } else {
                     ToastUtils.show(context, "请输入IMEI和报修报损原因");
                 }

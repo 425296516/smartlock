@@ -36,6 +36,7 @@
         android:drawableRight="@drawable/ic_star_black_6dp"
         android:visibility="gone"
         android:hint="请输入IMEI号"
+        android:maxLength="16"
         android:padding="10dp"
         android:textColor="@color/color_8C8686"
         android:textSize="14sp" />

@@ -6,7 +6,6 @@
     android:background="@drawable/shape_login_bg"
     android:orientation="vertical">
 
-
     <TextView
         android:id="@+id/tv_name_title"
         android:layout_width="wrap_content"
@@ -32,7 +31,6 @@
         android:textColor="@color/color_1654E2"
         android:textSize="14sp" />
 
-
     <TextView
         android:id="@+id/tv_phone_title"
         android:layout_width="wrap_content"
@@ -56,17 +54,37 @@
         android:textColor="@color/color_1654E2"
         android:textSize="14sp" />
 
-    <TextView
-        android:id="@+id/tv_dialog_device_unlock"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_margin="30dp"
-        android:background="@drawable/shape_password_protect_bg"
-        android:gravity="center"
-        android:text="设备解锁"
-        android:textColor="@color/color_E53232"
-        android:textSize="14sp" />
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_dialog_cancel_warn"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:background="@drawable/shape_password_protect_bg"
+            android:gravity="center"
+            android:text="消除预警"
+            android:textColor="@color/color_1F1F1F"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/tv_dialog_device_unlock"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="20dp"
+            android:layout_weight="1"
+            android:background="@drawable/shape_password_protect_bg"
+            android:gravity="center"
+            android:text="设备解锁"
+            android:textColor="@color/color_E53232"
+            android:textSize="14sp" />
+
+    </LinearLayout>
 
 </RelativeLayout>

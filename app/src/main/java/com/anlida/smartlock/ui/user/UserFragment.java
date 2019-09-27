@@ -129,10 +129,12 @@ public class UserFragment extends LazyLoadFragment {
                             if (isAdded() && userInfo.getCode() == 0 && userInfo.getData().size() > 0) {
                                 id = userInfo.getData().get(0).getId();
                                 tvName.setText(userInfo.getData().get(0).getName());
-                                tvWorkAddress.setText(userInfo.getData().get(0).getAddress());
+                                tvWorkAddress.setText(userInfo.getData().get(0).getBys());
                                 tvWorkClass.setText(userInfo.getData().get(0).getWorkType());
                                 tvPhone.setText(userInfo.getData().get(0).getPhone());
                                 tvWorkId.setText(userInfo.getData().get(0).getWorkId());
+
+                                tvUrgentWorkAddress.setText(userInfo.getData().get(0).getBys());
                             }
                     }
                 });
@@ -147,7 +149,7 @@ public class UserFragment extends LazyLoadFragment {
                         if (isAdded() && userInfo.getCode() == 0 && userInfo.getData().size()>0) {
                             liableId = userInfo.getData().get(0).getId();
                             tvUrgentName.setText(userInfo.getData().get(0).getName());
-                            tvUrgentWorkAddress.setText(userInfo.getData().get(0).getAddress());
+
                             tvWorkClassUrgent.setText(userInfo.getData().get(0).getWorkType());
                             tvUrgentPhone.setText(userInfo.getData().get(0).getPhone());
                             tvUrgentWorkId.setText(userInfo.getData().get(0).getWorkId());
@@ -159,7 +161,7 @@ public class UserFragment extends LazyLoadFragment {
     public AlertDialog showUpdatePhone(View view, Activity activity) {
         AlertDialog alertDialog = new AlertDialog.Builder(activity, AlertDialog.THEME_HOLO_DARK).create();
         alertDialog.show();
-        alertDialog.setCanceledOnTouchOutside(false);
+        alertDialog.setCanceledOnTouchOutside(true);
         // 获取布局
         final Window window = alertDialog.getWindow();
 

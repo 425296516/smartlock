@@ -421,7 +421,7 @@ public class HomeFragment extends LazyLoadFragment implements AMap.OnMarkerClick
         if (isAdded()) {
             MarkerOptions markerOption = new MarkerOptions()
                     .title("我的锁扣")
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.img_1))
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.img_2))
                     .position(new LatLng(dataBean.getLatitude(), dataBean.getLongitude()))
                     .snippet("1")
                     .draggable(true);

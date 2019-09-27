@@ -22,7 +22,7 @@
         android:layout_marginTop="10dp"
         android:layout_marginRight="50dp"
         android:background="@drawable/shape_rec_circle_668fec"
-        android:text="锁扣领用"
+        android:text="安全带领用"
         android:textColor="@android:color/white"
         android:textSize="12sp"
 

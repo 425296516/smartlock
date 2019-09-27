@@ -170,6 +170,7 @@ public class DialogUtil {
     public static AlertDialog showDialogLock(Activity activity,boolean isAll) {
         AlertDialog alertDialog = new AlertDialog.Builder(activity, AlertDialog.THEME_HOLO_DARK).create();
         alertDialog.show();
+        alertDialog.setCanceledOnTouchOutside(true);
         // 获取布局
         final Window window = alertDialog.getWindow();
         window.setContentView(R.layout.dialog_device_lock);
@@ -194,15 +195,27 @@ public class DialogUtil {
     public static AlertDialog showDialogunLock(Activity activity,String name ,String phone,View.OnClickListener onClickListener) {
         AlertDialog alertDialog = new AlertDialog.Builder(activity, AlertDialog.THEME_HOLO_DARK).create();
         alertDialog.show();
+        alertDialog.setCanceledOnTouchOutside(true);
         // 获取布局
         final Window window = alertDialog.getWindow();
         window.setContentView(R.layout.dialog_device_unlock);
         TextView tvConfirm = window.findViewById(R.id.tv_dialog_device_unlock);
+        TextView tvCancel = window.findViewById(R.id.tv_dialog_cancel_warn);
         TextView tvName = window.findViewById(R.id.tv_name);
         TextView tvPhone = window.findViewById(R.id.tv_phone);
 
         tvName.setText(name);
         tvPhone.setText(phone);
+
+        tvCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onClickListener.onClick(v);
+                if (alertDialog != null) {
+                    alertDialog.dismiss();
+                }
+            }
+        });
 
         tvConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -219,6 +232,7 @@ public class DialogUtil {
     public static AlertDialog showDialogunLockConfirm(Activity activity,View.OnClickListener onClickListener) {
         AlertDialog alertDialog = new AlertDialog.Builder(activity, AlertDialog.THEME_HOLO_DARK).create();
         alertDialog.show();
+        alertDialog.setCanceledOnTouchOutside(true);
         // 获取布局
         final Window window = alertDialog.getWindow();
         window.setContentView(R.layout.dialog_device_unlock_confirm);

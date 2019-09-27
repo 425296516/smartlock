@@ -100,7 +100,7 @@ public class DeviceManagerAdapter extends RecyclerView.Adapter<DeviceManagerAdap
         holder.tvPhone.setText(deviceManagerList.get(position).getPhone());
 
         if (deviceManagerList.get(position).getStatus() == 0) {
-            holder.tvLockStatus.setText("未上锁");
+            holder.tvLockStatus.setText("未开机");
             setLeftDrawable(holder.tvLockStatus, R.drawable.icon_3);
         } else if (deviceManagerList.get(position).getStatus() == 1) {
             holder.tvLockStatus.setText("可上锁");

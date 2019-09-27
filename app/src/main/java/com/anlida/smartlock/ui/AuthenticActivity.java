@@ -203,7 +203,7 @@ public class AuthenticActivity extends FMActivity {
                 && !TextUtils.isEmpty(tvSelectCity.getText().toString()) && !TextUtils.isEmpty(etWorkName.getText().toString())&& !TextUtils.isEmpty(etBys.getText().toString())
                 &&!TextUtils.isEmpty(etWorktype.getText().toString()) && !TextUtils.isEmpty(etName.getText().toString())&& !TextUtils.isEmpty(etWorkId.getText().toString())
                 &&!TextUtils.isEmpty(etIdcard.getText().toString()) && !TextUtils.isEmpty(etPhone.getText().toString())
-                &&!TextUtils.isEmpty(etSaddress.getText().toString()) && !TextUtils.isEmpty(etSbs.getText().toString())&& !TextUtils.isEmpty(etSworkType.getText().toString())
+                &&!TextUtils.isEmpty(etSworkType.getText().toString())
                 &&!TextUtils.isEmpty(etSName.getText().toString()) && !TextUtils.isEmpty(etSworkid.getText().toString())&& !TextUtils.isEmpty(etSidcard.getText().toString())) {
                     if(RegexUtils.isMobileSimple(etPhone.getText().toString()) && RegexUtils.isMobileSimple(etSphone.getText().toString())) {
                         if (RegexUtils.isIDCard18(etIdcard.getText().toString()) && RegexUtils.isIDCard18(etSidcard.getText().toString())) {
