@@ -6,6 +6,15 @@
     android:background="@drawable/shape_login_bg"
     android:orientation="vertical">
 
+    <ImageView
+        android:id="@+id/iv_close"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:src="@drawable/icon_cuowu"
+        android:padding="10dp"
+        />
+
     <TextView
         android:id="@+id/tv_name_title"
         android:layout_width="wrap_content"
@@ -67,9 +76,9 @@
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_weight="1"
-            android:background="@drawable/shape_password_protect_bg"
+            android:background="@drawable/shape_rec_circle_solid_414141"
             android:gravity="center"
-            android:text="消除预警"
+            android:text="解除预警"
             android:textColor="@color/color_1F1F1F"
             android:textSize="14sp" />
 
@@ -79,10 +88,10 @@
             android:layout_height="40dp"
             android:layout_marginLeft="20dp"
             android:layout_weight="1"
-            android:background="@drawable/shape_password_protect_bg"
+            android:background="@drawable/shape_bg_e53232"
             android:gravity="center"
             android:text="设备解锁"
-            android:textColor="@color/color_E53232"
+            android:textColor="@android:color/white"
             android:textSize="14sp" />
 
     </LinearLayout>

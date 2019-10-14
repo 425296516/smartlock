@@ -57,6 +57,7 @@ public class WarningRecordFragment extends LazyLoadFragment {
     }
 
 
+
     @Override
     public void initView() {
         initRecyclerView();
@@ -67,9 +68,16 @@ public class WarningRecordFragment extends LazyLoadFragment {
         return true;
     }
 
-    @OnClick({R.id.tv_search})
+    @OnClick({R.id.btn_refresh_data,R.id.tv_search})
     public void onClick(View v) {
         switch (v.getId()) {
+
+            case R.id.btn_refresh_data:
+
+                getWarningRecord(1, 300);
+
+                break;
+
             case R.id.tv_search:
 
                 getSearchWarningRecord(1, 300, etSearch.getText().toString(), 1);

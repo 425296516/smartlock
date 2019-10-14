@@ -19,6 +19,17 @@
         android:paddingLeft="10dp"
         android:textSize="12sp" />
 
+    <Button
+        android:id="@+id/btn_refresh_data"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/shape_rec_circle_solid_e53232"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:textColor="@color/color_E53232"
+        android:text="点击查看最新预警"/>
+
     <TextView
         android:id="@+id/tv_search"
         android:layout_width="70dp"

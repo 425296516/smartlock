@@ -2,6 +2,7 @@ package com.anlida.smartlock.network;
 
 import com.anlida.smartlock.model.HttpResult;
 import com.anlida.smartlock.model.req.LoginPost;
+import com.anlida.smartlock.model.req.ReqAirQuality;
 import com.anlida.smartlock.model.req.ReqDealWarning;
 import com.anlida.smartlock.model.req.ReqDeviceManager;
 import com.anlida.smartlock.model.req.ReqDeviceUse;
@@ -13,6 +14,7 @@ import com.anlida.smartlock.model.req.ReqUnLockList;
 import com.anlida.smartlock.model.req.ReqUpdatePhone;
 import com.anlida.smartlock.model.req.ReqWarnRecord;
 import com.anlida.smartlock.model.req.ReqWorkerInfo;
+import com.anlida.smartlock.model.resp.RespCityLocation;
 import com.anlida.smartlock.model.resp.RespDeviceManager;
 import com.anlida.smartlock.model.resp.RespPersonCenter;
 import com.anlida.smartlock.model.resp.RespRemoteToken;
@@ -61,7 +63,11 @@ public interface RestAPI {
 
     //获取预警设备位置的接口
     @GET("/warninglog/getCoordinate")
-    Flowable<RespWarnLocation> getWarningLocation(@Query("updateBy") String updateBy);
+    Flowable<RespWarnLocation> getWarningLocation(@Query("createBy") String updateBy);
+
+    //获取设备位置的接口
+    @GET("/equipment/Getcoordinate")
+    Flowable<RespWarnLocation> getDeviceLocation(@Query("createBy") String updateBy);
 
     //获取预警记录接口
     @POST("/warninglog/page")
@@ -95,6 +101,14 @@ public interface RestAPI {
     //设备解锁的接口
     @GET("/devices/op/Androidjiesuo")
     Flowable<HttpResult> deviceunLock(@Query("command") String command,@Query("imei") String imei);
+
+    //获取城市地理位置
+    @GET("/geocoder/v2/")
+    Flowable<RespCityLocation> getLocationCity(@Query("ak") String ak, @Query("location") String location, @Query("output") String output, @Query("pois") String pois);
+
+    //获取城市雾霾数据
+    @POST("/airquality/list")
+    Flowable<HttpResult> airquality(@Body ReqAirQuality reqAirQuality);
 
     //获取指令下发的token
     @FormUrlEncoded

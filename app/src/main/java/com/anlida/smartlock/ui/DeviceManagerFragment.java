@@ -20,7 +20,6 @@ import com.anlida.smartlock.model.resp.RespDeviceManager;
 import com.anlida.smartlock.model.resp.RespRemoteToken;
 import com.anlida.smartlock.network.HttpClient;
 import com.anlida.smartlock.utils.DataWarehouse;
-import com.anlida.smartlock.utils.DialogUtil;
 import com.anlida.smartlock.utils.ToastUtils;
 
 import org.greenrobot.eventbus.Subscribe;
@@ -80,9 +79,15 @@ public class DeviceManagerFragment extends LazyLoadFragment {
 
     }
 
-    @OnClick({R.id.tv_search, R.id.btn_device_lock, R.id.tv_add_device_person, R.id.tv_all_select})
+    @OnClick({R.id.btn_refresh_data,R.id.tv_search, R.id.btn_device_lock, R.id.tv_add_device_person, R.id.tv_all_select})
     public void onClick(View v) {
         switch (v.getId()) {
+
+            case R.id.btn_refresh_data:
+
+                getDeviceManager(1, 300);
+
+                break;
 
             case R.id.tv_search:
 
@@ -221,11 +226,11 @@ public class DeviceManagerFragment extends LazyLoadFragment {
                     @Override
                     public void onNext(HttpResult httpResult) {
                         if ("200".equals(httpResult.getCode())) {
-                            if (deviceManagerAdapter.getItemCount() == deviceManagerAdapter.getSelectList().size()) {
-                                DialogUtil.showDialogLock(getActivity(), true);
+                           /* if (deviceManagerAdapter.getItemCount() == deviceManagerAdapter.getSelectList().size()) {
+                                ToastUtils.show(context,"已上锁（全部）");
                             } else {
-                                DialogUtil.showDialogLock(getActivity(), false);
-                            }
+                                ToastUtils.show(context,"已锁定");
+                            }*/
                             getDeviceManager(1, 300);
                         }else {
                             ToastUtils.show(context,"上锁失败");

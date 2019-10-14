@@ -59,11 +59,11 @@
         android:layout_height="wrap_content"
         android:layout_marginRight="5dp"
         android:padding="3dp"
-        android:background="@color/color_D3D3D3"
+        android:background="@drawable/shape_rec_circle_solid_1654e2"
         android:gravity="center"
         android:text="点击处理"
-        android:textColor="@color/color_8A8A8A"
-        android:textSize="12sp" />
+        android:textColor="@color/color_1654E2"
+        android:textSize="10sp" />
 
 
 </LinearLayout>

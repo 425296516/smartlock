@@ -99,23 +99,35 @@ public class DeviceManagerAdapter extends RecyclerView.Adapter<DeviceManagerAdap
         holder.tvIdcard.setText(deviceManagerList.get(position).getIdCard());
         holder.tvPhone.setText(deviceManagerList.get(position).getPhone());
 
+        holder.tvNetStatus.setText("信号强");
+        setLeftDrawable(holder.tvNetStatus, R.drawable.icon_6);
         if (deviceManagerList.get(position).getStatus() == 0) {
             holder.tvLockStatus.setText("未开机");
+            holder.tvLockStatus.setTextColor(mActivity.getResources().getColor(R.color.color_1F1F1F));
             setLeftDrawable(holder.tvLockStatus, R.drawable.icon_3);
+            holder.tvNetStatus.setText("无信号");
+            setLeftDrawable(holder.tvNetStatus, R.drawable.icon_8);
         } else if (deviceManagerList.get(position).getStatus() == 1) {
             holder.tvLockStatus.setText("可上锁");
             holder.tvLockStatus.setTextColor(mActivity.getResources().getColor(R.color.color_F88D0E));
             setLeftDrawable(holder.tvLockStatus, R.drawable.icon_4);
+        } else if (deviceManagerList.get(position).getStatus() == 2) {
+            holder.tvLockStatus.setText("解锁中");
+            holder.tvLockStatus.setTextColor(mActivity.getResources().getColor(R.color.color_FE400E));
+            setLeftDrawable(holder.tvLockStatus, R.drawable.icon_2);
+        } else if (deviceManagerList.get(position).getStatus() == 3) {
+            holder.tvLockStatus.setText("上锁中");
+            holder.tvLockStatus.setTextColor(mActivity.getResources().getColor(R.color.color_FE400E));
+            setLeftDrawable(holder.tvLockStatus, R.drawable.icon_2);
         } else if (deviceManagerList.get(position).getStatus() == 4) {
             holder.tvLockStatus.setText("已上锁");
             holder.tvLockStatus.setTextColor(mActivity.getResources().getColor(R.color.color_549203));
             setLeftDrawable(holder.tvLockStatus, R.drawable.icon_1);
         } else if (deviceManagerList.get(position).getStatus() == 5) {
-            holder.tvLockStatus.setText("上锁异常");
+            holder.tvLockStatus.setText("设备异常");
             holder.tvLockStatus.setTextColor(mActivity.getResources().getColor(R.color.color_FE400E));
             setLeftDrawable(holder.tvLockStatus, R.drawable.icon_2);
         }
-
 
         if (mAllSelect) {
             if (1 == deviceManagerList.get(position).getStatus()) {

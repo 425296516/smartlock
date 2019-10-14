@@ -90,6 +90,12 @@ public class UnLockAdapter extends RecyclerView.Adapter<UnLockAdapter.UnLockView
             holder.tvTime.setText(""+time);
         }
 
+        if(listBeans.get(position).getWarningType().equals("请求上锁")){
+            holder.tvType.setTextColor(mActivity.getResources().getColor(R.color.color_96BB65));
+        }else  if(listBeans.get(position).getWarningType().equals("请求解锁")){
+            holder.tvType.setTextColor(mActivity.getResources().getColor(R.color.color_ED8181));
+        }
+
         holder.tvType.setText(listBeans.get(position).getWarningType());
 
         if (mAllSelect) {

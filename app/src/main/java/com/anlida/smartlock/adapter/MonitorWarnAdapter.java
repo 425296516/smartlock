@@ -93,22 +93,8 @@ public class MonitorWarnAdapter extends RecyclerView.Adapter<MonitorWarnAdapter.
                 public void onClick(View v) {
                     RespWarnRecord.DataBean.ListBean listBean = listBeans.get(position);
 
-                    DialogUtil.showDialogunLock(mActivity, listBean.getUname(), listBean.getPhone(), new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            if (v.getId() == R.id.tv_dialog_cancel_warn) {
-                                dealWarningRecord(listBean.getId() + "", "2");
-                            } else {
-                                DialogUtil.showDialogunLockConfirm(mActivity, new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        getRemoteToken(listBean.getImei());
-                                        dealWarningRecord(listBean.getId() + "", "2");
-                                    }
-                                });
-                            }
-                        }
-                    });
+                    showDialogunLock(listBean);
+
                 }
             });
 
@@ -118,6 +104,34 @@ public class MonitorWarnAdapter extends RecyclerView.Adapter<MonitorWarnAdapter.
         }
 
     }
+
+    public void showDialogunLock(RespWarnRecord.DataBean.ListBean listBean){
+        DialogUtil.showDialogunLock(mActivity, listBean.getUname(), listBean.getPhone(), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (v.getId() == R.id.tv_dialog_cancel_warn) {
+                    dealWarningRecord(listBean.getId() + "", "2");
+                } else  if (v.getId() == R.id.tv_dialog_device_unlock) {
+                    showDialogunLockConfirm(listBean);
+                }
+            }
+        });
+    }
+
+    public void showDialogunLockConfirm(RespWarnRecord.DataBean.ListBean listBean){
+        DialogUtil.showDialogunLockConfirm(mActivity, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (v.getId() == R.id.tv_dialog_device_unlock_confirm) {
+                    getRemoteToken(listBean.getImei());
+                    dealWarningRecord(listBean.getId() + "", "2");
+                }else {
+                    showDialogunLock(listBean);
+                }
+            }
+        });
+    }
+
 
     private void getRemoteToken(String imei) {
         DataWarehouse.setAccessToken("Basic Ymxlc3NlZDpibGVzc2Vk");

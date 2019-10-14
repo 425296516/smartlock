@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.anlida.smartlock.R;
@@ -199,6 +200,7 @@ public class DialogUtil {
         // 获取布局
         final Window window = alertDialog.getWindow();
         window.setContentView(R.layout.dialog_device_unlock);
+        ImageView ivClose = window.findViewById(R.id.iv_close);
         TextView tvConfirm = window.findViewById(R.id.tv_dialog_device_unlock);
         TextView tvCancel = window.findViewById(R.id.tv_dialog_cancel_warn);
         TextView tvName = window.findViewById(R.id.tv_name);
@@ -206,6 +208,16 @@ public class DialogUtil {
 
         tvName.setText(name);
         tvPhone.setText(phone);
+
+        ivClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onClickListener.onClick(v);
+                if (alertDialog != null) {
+                    alertDialog.dismiss();
+                }
+            }
+        });
 
         tvCancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -232,7 +244,7 @@ public class DialogUtil {
     public static AlertDialog showDialogunLockConfirm(Activity activity,View.OnClickListener onClickListener) {
         AlertDialog alertDialog = new AlertDialog.Builder(activity, AlertDialog.THEME_HOLO_DARK).create();
         alertDialog.show();
-        alertDialog.setCanceledOnTouchOutside(true);
+        alertDialog.setCanceledOnTouchOutside(false);
         // 获取布局
         final Window window = alertDialog.getWindow();
         window.setContentView(R.layout.dialog_device_unlock_confirm);
@@ -252,6 +264,7 @@ public class DialogUtil {
         tvCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                onClickListener.onClick(v);
                 if (alertDialog != null) {
                     alertDialog.dismiss();
                 }

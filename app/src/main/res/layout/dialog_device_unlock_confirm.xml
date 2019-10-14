@@ -20,7 +20,6 @@
         android:textColor="@color/text_color"
         android:textSize="14sp" />
 
-
     <TextView
         android:id="@+id/tv_dialog_device_unlock_confirm"
         android:layout_width="match_parent"

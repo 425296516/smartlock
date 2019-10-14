@@ -15,6 +15,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -42,8 +43,10 @@ import com.anlida.smartlock.base.FMSubscriber;
 import com.anlida.smartlock.base.LazyLoadFragment;
 import com.anlida.smartlock.event.UpdateWarnRecord;
 import com.anlida.smartlock.model.HttpResult;
+import com.anlida.smartlock.model.req.ReqAirQuality;
 import com.anlida.smartlock.model.req.ReqUnLockList;
 import com.anlida.smartlock.model.req.ReqWarnRecord;
+import com.anlida.smartlock.model.resp.RespCityLocation;
 import com.anlida.smartlock.model.resp.RespRemoteToken;
 import com.anlida.smartlock.model.resp.RespWarnLocation;
 import com.anlida.smartlock.model.resp.RespWarnRecord;
@@ -113,6 +116,8 @@ public class HomeFragment extends LazyLoadFragment implements AMap.OnMarkerClick
     TextView tvNoResultData;
     @BindView(R.id.tv_all_select)
     TextView tvAllSelect;
+    @BindView(R.id.btn_refresh_data)
+    Button btnRefreshData;
 
     private AMap aMap;
 
@@ -152,6 +157,7 @@ public class HomeFragment extends LazyLoadFragment implements AMap.OnMarkerClick
     @Override
     protected void loadData() {
         getWarningRecord(1, 300);
+        getDeviceLocation();
         getWarningLocation();
 
         getUnDeal(1, 300);
@@ -165,7 +171,7 @@ public class HomeFragment extends LazyLoadFragment implements AMap.OnMarkerClick
 
     @Override
     public void initData() {
-
+        airquality();
     }
 
 
@@ -334,6 +340,30 @@ public class HomeFragment extends LazyLoadFragment implements AMap.OnMarkerClick
                 });
     }
 
+    private void airquality() {
+
+        HttpClient.getInstance("http://api.map.baidu.com/geocoder/").service.getLocationCity("nuqaURQzdHFbhKaMNX6P9La7EYFmaeWc", DataWarehouse.getLatitude() + "," + DataWarehouse.getLongitude(), "json", "1")
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new FMSubscriber<RespCityLocation>() {
+                    @Override
+                    public void onNext(RespCityLocation respCityLocation) {
+                        HttpClient.getInstance().service.airquality(new ReqAirQuality(DataWarehouse.getUserId(), respCityLocation.getResult().getAddressComponent().getCity()))
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(new FMSubscriber<HttpResult>() {
+                                    @Override
+                                    public void onNext(HttpResult httpResult) {
+
+                                    }
+                                });
+
+                    }
+
+                });
+
+    }
+
     private void deviceLock() {
         StringBuffer stringBuffer = new StringBuffer();
         ArrayList<RespWarnRecord.DataBean.ListBean> list = unLockAdapter.getSelectList();
@@ -392,6 +422,29 @@ public class HomeFragment extends LazyLoadFragment implements AMap.OnMarkerClick
         }
     }
 
+    private void getDeviceLocation() {
+        HttpClient.getInstance().service.getDeviceLocation(DataWarehouse.getUserId())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new FMSubscriber<RespWarnLocation>() {
+                    @Override
+                    public void onNext(RespWarnLocation respWarnLocation) {
+                        if (respWarnLocation != null && !TextUtils.isEmpty(respWarnLocation.getMsg())) {
+                            new Handler().postDelayed(new Runnable() {//目的是替换定位的
+                                @Override
+                                public void run() {
+                                    for (int i = 0; i < respWarnLocation.getData().size(); i++) {
+                                        if (respWarnLocation.getData().get(i).getLatitude() > 0 && respWarnLocation.getData().get(i).getLongitude() > 0) {
+                                            addMarkerToMap(respWarnLocation.getData().get(i), 2);
+                                        }
+                                    }
+                                }
+                            }, 500);
+                        }
+                    }
+                });
+    }
+
     private void getWarningLocation() {
         HttpClient.getInstance().service.getWarningLocation(DataWarehouse.getUserId())
                 .subscribeOn(Schedulers.io())
@@ -404,7 +457,7 @@ public class HomeFragment extends LazyLoadFragment implements AMap.OnMarkerClick
                             public void run() {
                                 for (int i = 0; i < respWarnLocation.getData().size(); i++) {
                                     if (respWarnLocation.getData().get(i).getLatitude() > 0 && respWarnLocation.getData().get(i).getLongitude() > 0) {
-                                        addCarMarkerToMap(respWarnLocation.getData().get(i));
+                                        addMarkerToMap(respWarnLocation.getData().get(i), 1);
                                     }
                                 }
                             }
@@ -417,15 +470,18 @@ public class HomeFragment extends LazyLoadFragment implements AMap.OnMarkerClick
     /**
      * 在地图上添加的marker
      */
-    private void addCarMarkerToMap(RespWarnLocation.DataBean dataBean) {
+    private void addMarkerToMap(RespWarnLocation.DataBean dataBean, int type) {
         if (isAdded()) {
             MarkerOptions markerOption = new MarkerOptions()
                     .title("我的锁扣")
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.img_2))
                     .position(new LatLng(dataBean.getLatitude(), dataBean.getLongitude()))
                     .snippet("1")
                     .draggable(true);
-
+            if (type == 1) {
+                markerOption.icon(BitmapDescriptorFactory.fromResource(R.drawable.img_2));
+            } else {
+                markerOption.icon(BitmapDescriptorFactory.fromResource(R.drawable.img_gps_green));
+            }
             Marker carMarker = aMap.addMarker(markerOption);
             carMarker.setObject(dataBean);
             mMarkerList.add(carMarker);
@@ -433,9 +489,21 @@ public class HomeFragment extends LazyLoadFragment implements AMap.OnMarkerClick
         }
     }
 
-    @OnClick({R.id.btn_unlock, R.id.btn_device_lock, R.id.iv_top_bottom, R.id.iv_left_right})
+
+    @OnClick({R.id.btn_refresh_data, R.id.btn_unlock, R.id.btn_device_lock, R.id.iv_top_bottom, R.id.iv_left_right})
     public void onViewClicked(View v) {
         switch (v.getId()) {
+
+            case R.id.btn_refresh_data:
+
+                getWarningRecord(1, 300);
+                getDeviceLocation();
+                getWarningLocation();
+
+                getUnDeal(1, 300);
+                getHaveDeal(1, 300);
+
+                break;
 
             case R.id.btn_unlock:
 
@@ -456,7 +524,6 @@ public class HomeFragment extends LazyLoadFragment implements AMap.OnMarkerClick
             case R.id.iv_top_bottom:
 
                 if (rlUnlock.getVisibility() == View.VISIBLE) {
-
                     Animation animation = AnimationUtils.loadAnimation(context, R.anim.unlock_hide);
                     rlPleaseUnlock.startAnimation(animation);
 
@@ -598,6 +665,9 @@ public class HomeFragment extends LazyLoadFragment implements AMap.OnMarkerClick
             aMap.setMyLocationEnabled(true);
             aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(aMap.getMyLocation().getLatitude(),
                     aMap.getMyLocation().getLongitude()), 100f));
+            DataWarehouse.setLatitude(aMap.getMyLocation().getLatitude());
+            DataWarehouse.setLongitude(aMap.getMyLocation().getLongitude());
+            airquality();
         }
     }
 
