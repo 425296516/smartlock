@@ -237,6 +237,12 @@ public class DeviceManagerFragment extends LazyLoadFragment {
                         }
                     }
                 });
+
+
+
+
+
+
     }
 
     private void getRemoteToken() {

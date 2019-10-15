@@ -86,7 +86,7 @@ public class ScanAddDeviceActivity extends FMActivity {
                     if(etImei.getText().toString().length()==15) {
                         if (RegexUtils.isMobileSimple(etInputPhone.getText().toString())) {
                             if (RegexUtils.isIDCard18(etInputIdcard.getText().toString())) {
-                                if(!cbMan.isChecked() && !cbWoman.isChecked()) {
+                                if(cbMan.isChecked() || cbWoman.isChecked()) {
                                     addDeviceAndUser(DataWarehouse.getUserId(), etImei.getText().toString(), etInputName.getText().toString(),
                                             etInputWordid.getText().toString(), etInputIdcard.getText().toString(), etInputPhone.getText().toString(),
                                             etInputAge.getText().toString(), tvInputBloodtype.getText().toString(), cbMan.isChecked() ? "1" : "2");
@@ -180,7 +180,7 @@ public class ScanAddDeviceActivity extends FMActivity {
     }
 
     public void addDeviceAndUser(String createBy, String imei, String name, String workId, String idCard, String phone, String age, String bloodType, String sex) {
-        HttpClient.getInstance().service.addDeviceAndUser(new ReqDeviceUse(createBy, imei, name, workId, idCard, phone, age, bloodType, sex))
+        HttpClient.getInstance().service.addDeviceAndUser(new ReqDeviceUse(createBy, imei, name, workId, idCard, phone, age, bloodType, sex,DataWarehouse.getLatitude()+"",DataWarehouse.getLongitude()+""))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new FMSubscriber<HttpResult>() {

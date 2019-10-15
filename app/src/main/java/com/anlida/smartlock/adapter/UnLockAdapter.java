@@ -39,6 +39,7 @@ public class UnLockAdapter extends RecyclerView.Adapter<UnLockAdapter.UnLockView
 
     public void setData(List<RespWarnRecord.DataBean.ListBean> listBeans) {
         this.listBeans = listBeans;
+        hashSet.clear();
         notifyDataSetChanged();
     }
 

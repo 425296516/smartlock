@@ -295,6 +295,7 @@ public class HomeFragment extends LazyLoadFragment implements AMap.OnMarkerClick
                             rlUnlock.setVisibility(View.VISIBLE);
                             tvNoPleaseData.setVisibility(View.GONE);
                             unLockAdapter.setData(respWarnRecord.getData().getList());
+                            unLockAdapter.setAllSelect(false);
 
                         } else {
                             tvNoPleaseData.setVisibility(View.VISIBLE);
@@ -341,14 +342,13 @@ public class HomeFragment extends LazyLoadFragment implements AMap.OnMarkerClick
     }
 
     private void airquality() {
-
         HttpClient.getInstance("http://api.map.baidu.com/geocoder/").service.getLocationCity("nuqaURQzdHFbhKaMNX6P9La7EYFmaeWc", DataWarehouse.getLatitude() + "," + DataWarehouse.getLongitude(), "json", "1")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new FMSubscriber<RespCityLocation>() {
                     @Override
                     public void onNext(RespCityLocation respCityLocation) {
-                        HttpClient.getInstance().service.airquality(new ReqAirQuality(DataWarehouse.getUserId(), respCityLocation.getResult().getAddressComponent().getCity()))
+                        HttpClient.getInstance().service.airquality(new ReqAirQuality(DataWarehouse.getUserId(), respCityLocation.getResult().getAddressComponent().getCity(),DataWarehouse.getLatitude()+"" , ""+DataWarehouse.getLongitude()))
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(new FMSubscriber<HttpResult>() {
@@ -357,9 +357,7 @@ public class HomeFragment extends LazyLoadFragment implements AMap.OnMarkerClick
 
                                     }
                                 });
-
                     }
-
                 });
 
     }
@@ -665,8 +663,7 @@ public class HomeFragment extends LazyLoadFragment implements AMap.OnMarkerClick
             aMap.setMyLocationEnabled(true);
             aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(aMap.getMyLocation().getLatitude(),
                     aMap.getMyLocation().getLongitude()), 100f));
-            DataWarehouse.setLatitude(aMap.getMyLocation().getLatitude());
-            DataWarehouse.setLongitude(aMap.getMyLocation().getLongitude());
+
             airquality();
         }
     }

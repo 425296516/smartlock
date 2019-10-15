@@ -66,6 +66,10 @@
             android:name=".zxing.QRCodeScanActivity"
             android:screenOrientation="portrait" />
 
+        <service
+            android:name=".service.LocationService"
+            android:exported="false" />
+
         <service android:name="com.amap.api.location.APSService" />
 
         <meta-data
