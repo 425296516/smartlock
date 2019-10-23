@@ -1,12 +1,16 @@
 package com.anlida.smartlock.ui.user;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Paint;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
@@ -36,6 +40,9 @@ import com.anlida.smartlock.utils.CountDownUtils;
 import com.anlida.smartlock.utils.DataWarehouse;
 import com.anlida.smartlock.utils.DialogUtil;
 import com.anlida.smartlock.utils.ToastUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -78,7 +85,37 @@ public class LoginActivity extends FMActivity {
 
     @Override
     public void initData(Bundle bundle) {
+        checkPermission();
+    }
 
+    private String[] permissions = {
+            Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            /*Manifest.permission.CALL_PHONE, Manifest.permission.CAMERA*/};
+
+    List<String> mPermissionList = new ArrayList<>();
+
+    // 权限判断
+    public void checkPermission() {
+
+        /**
+         * 判断哪些权限未授予
+         */
+        mPermissionList.clear();
+        for (int i = 0; i < permissions.length; i++) {
+            if (ContextCompat.checkSelfPermission(this, permissions[i]) != PackageManager.PERMISSION_GRANTED) {
+                mPermissionList.add(permissions[i]);
+            }
+        }
+
+        /**
+         * 判断是否为空
+         */
+        if (mPermissionList.isEmpty()) {//未授予的权限为空，表示都授予了
+
+        } else {//请求权限方法
+            String[] permissions = mPermissionList.toArray(new String[mPermissionList.size()]);//将List转为数组
+            ActivityCompat.requestPermissions(this, permissions, 1);
+        }
     }
 
     private void login(String mobile, String pwd) {

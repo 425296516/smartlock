@@ -1,12 +1,17 @@
 package com.anlida.smartlock.ui;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.text.TextUtils;
 import android.view.Gravity;
@@ -64,6 +69,10 @@ public class AuthenticActivity extends FMActivity {
     private static final int REQUEST_PICK = 101;
     // 请求截图
     private static final int REQUEST_CROP_PHOTO = 102;
+    // 请求访问外部存储
+    private static final int READ_EXTERNAL_STORAGE_REQUEST_CODE = 103;
+    // 请求写入外部存储
+    private static final int WRITE_EXTERNAL_STORAGE_REQUEST_CODE = 104;
 
     private File tempFile;
     private ImageView uploadImage;
@@ -137,7 +146,7 @@ public class AuthenticActivity extends FMActivity {
                         if("0".equals(httpResult.getCode())) {
 
                             ReqManagerInfo reqManagerInfo = new ReqManagerInfo(DataWarehouse.getUserId(),
-                                    tvSelectCity.getText().toString(), etSaddress.getText().toString(), etSbs.getText().toString(),
+                                    tvSelectCity.getText().toString(), etWorkName.getText().toString(), etBys.getText().toString(),
                                     etSworkType.getText().toString(), etSName.getText().toString(),
                                     etSworkid.getText().toString(), etSidcard.getText().toString(), etSphone.getText().toString(), DataWarehouse.getUserId());
 
@@ -230,6 +239,25 @@ public class AuthenticActivity extends FMActivity {
                 break;
         }
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == WRITE_EXTERNAL_STORAGE_REQUEST_CODE) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                startCamera();
+            } else {
+                ToastUtils.show(this, getString(R.string.pic_clipimg_permission));
+            }
+        } else if (requestCode == READ_EXTERNAL_STORAGE_REQUEST_CODE) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                startPhoto();
+            } else {
+                ToastUtils.show(this, getString(R.string.pic_clipimg_permission));
+            }
+        }
+    }
+
 
     private List<ProvinceBean> options1Items = new ArrayList<>();
     private ArrayList<ArrayList<String>> options2Items = new ArrayList<>();
@@ -329,6 +357,7 @@ public class AuthenticActivity extends FMActivity {
     }
 
 
+    // 头像弹窗
     private View.OnClickListener popupSelectClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -336,21 +365,36 @@ public class AuthenticActivity extends FMActivity {
             switch (v.getId()) {
                 // 拍照
                 case R.id.pic_camera_btn:
-
-                    // 调用系统相机
-                    startCamera();
-
+                    // 权限判断
+                    if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
+                            ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                        // 申请WRITE_EXTERNAL_STORAGE权限
+                        ActivityCompat.requestPermissions(AuthenticActivity.this,
+                                new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_EXTERNAL_STORAGE_REQUEST_CODE);
+                    } else {
+                        // 调用系统相机
+                        startCamera();
+                    }
                     break;
 
                 // 相册
                 case R.id.pic_photo_btn:
-
-                    // 调用系统图库
-                    startPhoto();
+                    //权限判断
+                    if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE)
+                            != PackageManager.PERMISSION_GRANTED) {
+                        // 申请READ_EXTERNAL_STORAGE权限
+                        ActivityCompat.requestPermissions(AuthenticActivity.this,
+                                new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, READ_EXTERNAL_STORAGE_REQUEST_CODE);
+                    } else {
+                        // 调用系统图库
+                        startPhoto();
+                    }
                     break;
             }
         }
     };
+
+
 
     /**
      * 调用系统图库

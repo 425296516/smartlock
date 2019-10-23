@@ -149,7 +149,7 @@ public class MonitorWarnAdapter extends RecyclerView.Adapter<MonitorWarnAdapter.
     }
 
     private void unlockDevice(String imei) {
-        HttpClient.getInstance(HttpClient.BASE_URL_CONTROL).service.deviceunLock("S44", imei)
+        HttpClient.getInstance(HttpClient.BASE_URL_CONTROL).service.deviceunLock(DataWarehouse.getUserId(),"S44", imei)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new FMSubscriber<HttpResult>() {

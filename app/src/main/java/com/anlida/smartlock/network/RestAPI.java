@@ -100,7 +100,8 @@ public interface RestAPI {
 
     //设备解锁的接口
     @GET("/devices/op/Androidjiesuo")
-    Flowable<HttpResult> deviceunLock(@Query("command") String command,@Query("imei") String imei);
+    @Headers({"Content-Type:application/json;charset=UTF-8"})
+    Flowable<HttpResult> deviceunLock(@Query("userName") String userName, @Query("command") String command,@Query("imei") String imei);
 
     //获取城市地理位置
     @GET("/geocoder/v2/")
@@ -139,7 +140,6 @@ public interface RestAPI {
     //修改本人手机号
     @POST("/sms/updatePhone")
     Flowable<HttpResult> updatePhone(@Body ReqUpdatePhone reqUpdatePhone);
-
 
     //修改协同人人手机号
     @POST("/sms/updateXietongPhone")

@@ -99,7 +99,7 @@ public class DeviceManagerAdapter extends RecyclerView.Adapter<DeviceManagerAdap
         holder.tvIdcard.setText(deviceManagerList.get(position).getIdCard());
         holder.tvPhone.setText(deviceManagerList.get(position).getPhone());
 
-        holder.tvNetStatus.setText("信号强");
+        holder.tvNetStatus.setText("有信号");
         setLeftDrawable(holder.tvNetStatus, R.drawable.icon_6);
         if (deviceManagerList.get(position).getStatus() == 0) {
             holder.tvLockStatus.setText("未开机");

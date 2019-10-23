@@ -140,11 +140,7 @@ public class HomeFragment extends LazyLoadFragment implements AMap.OnMarkerClick
 
     @Override
     public void initView(View rootView) {
-        checkLocationPermission();
 
-        initGPS();
-
-        init();
 
         initRecyclerView();
     }
@@ -156,6 +152,12 @@ public class HomeFragment extends LazyLoadFragment implements AMap.OnMarkerClick
 
     @Override
     protected void loadData() {
+        checkLocationPermission();
+
+        initGPS();
+
+        init();
+
         getWarningRecord(1, 300);
         getDeviceLocation();
         getWarningLocation();
@@ -400,7 +402,7 @@ public class HomeFragment extends LazyLoadFragment implements AMap.OnMarkerClick
             }
         }
         if (stringBuffer.length() > 0) {
-            HttpClient.getInstance(HttpClient.BASE_URL_CONTROL).service.deviceunLock("S44", stringBuffer.toString().substring(1, stringBuffer.length()))
+            HttpClient.getInstance(HttpClient.BASE_URL_CONTROL).service.deviceunLock(DataWarehouse.getUserId(),"S44", stringBuffer.toString().substring(1, stringBuffer.length()))
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new FMSubscriber<HttpResult>() {
@@ -635,13 +637,11 @@ public class HomeFragment extends LazyLoadFragment implements AMap.OnMarkerClick
     protected boolean showToolBar() {
         return false;
     }
-
     // 权限判断
     public void checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // 申请READ_CONTACTS权限
-            requestPermissions(
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_ACCESS_FINE_LOCATION);
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_ACCESS_FINE_LOCATION);
         }
     }
 
@@ -650,7 +650,7 @@ public class HomeFragment extends LazyLoadFragment implements AMap.OnMarkerClick
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_ACCESS_FINE_LOCATION) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            if (grantResults!=null && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 requestLocation();
             } else {
                 ToastUtils.show(getActivity(), getString(R.string.pic_clipimg_permission));

@@ -4,11 +4,11 @@ public class ReqWarnRecord {
 
     int pageNum;
     int pageSize;
-    private String updateBy;
+    String status;
 
-    public ReqWarnRecord(int pageNum, int pageSize,String updateBy) {
+    public ReqWarnRecord(int pageNum, int pageSize,String status) {
         this.pageNum = pageNum;
         this.pageSize = pageSize;
-        this.updateBy = updateBy;
+        this.status = status;
     }
 }
